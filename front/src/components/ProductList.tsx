@@ -101,7 +101,6 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
             }}
           >
-            {/* 카트 추가 버튼 (카드 전체 영역) */}
             <button
               onClick={(e) => onAdd(product, e)}
               className="w-full text-left cursor-pointer"
@@ -132,7 +131,6 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               </div>
             </button>
 
-            {/* 관리자 수정/삭제 오버레이 */}
             {isAdmin && (
               <div
                 className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"

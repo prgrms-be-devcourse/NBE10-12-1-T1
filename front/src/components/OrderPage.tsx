@@ -1,18 +1,18 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import ProductList from './ProductList';
+import OrderSummary from './OrderSummary';
+import LoginModal from './LoginModal';
+import ProductFormModal from './ProductFormModal';
+import AdminOrderView from './AdminOrderView';
+import type { Product, CartItem, Order } from '@/types/order';
 
 const API = 'http://localhost:8080';
 
 function toProduct(p: { id: number; name: string; price: number; stock: number; img_url: string | null }) {
   return { id: p.id, name: p.name, price: p.price, stock: p.stock, imgUrl: p.img_url ?? '' };
 }
-import ProductList from './ProductList';
-import OrderSummary from './OrderSummary';
-import LoginModal from './LoginModal';
-import ProductFormModal from './ProductFormModal';
-import AdminOrderView from './AdminOrderView';
-import type { Product, CartItem, Order, OrderStatus } from '@/types/order';
 
 const DUMMY_ORDERS: Order[] = [
   {
@@ -224,7 +224,6 @@ export default function OrderPage() {
     // TODO: 주문 생성 API 연동
     console.log('주문 저장:', newOrder);
   };
-
 
   const handleLogin = (adminStatus: boolean) => {
     setIsAdmin(adminStatus);
