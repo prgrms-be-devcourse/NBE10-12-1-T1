@@ -1,6 +1,8 @@
 spring:
   application:
     name: back
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   profiles:
     active: dev
   output:
@@ -25,3 +27,6 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
     org.springframework.transaction.interceptor: TRACE
+
+
+
