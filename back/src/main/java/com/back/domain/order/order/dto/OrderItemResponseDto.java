@@ -3,10 +3,7 @@ package com.back.domain.order.order.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record OrderItemResponseDto(Long id,
-                                   String email,
-                                   String address,
-                                   List<OrderItemResponseDto> orderItems, // 응답용 상세 DTO 리스트
-                                   Integer totalPrice,                    // 총 결제 금액
-                                   LocalDateTime createdAt) {
+public record OrderItemResponseDto(String name,      // 커피 이름 (새로 추가됨)
+                                   Integer amount,   // 수량
+                                   Integer price) {
 }
