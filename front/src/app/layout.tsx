@@ -9,8 +9,11 @@ const gowunBatang = Gowun_Batang({
 });
 
 export const metadata: Metadata = {
-  title: "Grids & Circle",
+  title: "Beantage",
   description: "스페셜티 원두 주문",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({

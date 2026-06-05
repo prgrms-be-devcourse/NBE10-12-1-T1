@@ -5,7 +5,7 @@ interface Props {
   onAdd: (product: Product, e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const MAX_CARDS = 30;
+const MAX_CARDS = 40;
 
 function BeanPlaceholder({ origin }: { origin: string }) {
   const label = origin.split(' ')[0].slice(0, 6).toUpperCase();
@@ -36,12 +36,11 @@ function BeanPlaceholder({ origin }: { origin: string }) {
 }
 
 export default function ProductList({ products, onAdd }: Props) {
-  const visibleProducts = products.slice(0, MAX_CARDS);
-  const ghostCount = MAX_CARDS - visibleProducts.length;
+  const ghostCount = Math.max(0, MAX_CARDS - products.length);
 
   return (
     <div
-      className="rounded-2xl p-6 flex-1 overflow-hidden"
+      className="rounded-2xl p-6 flex-1 overflow-y-auto"
       style={{
         background: 'var(--surface)',
         border: '1px solid var(--line)',
@@ -55,7 +54,7 @@ export default function ProductList({ products, onAdd }: Props) {
           gap: 12,
         }}
       >
-        {visibleProducts.map((product) => (
+        {products.map((product) => (
           <button
             key={product.id}
             onClick={(e) => onAdd(product, e)}
