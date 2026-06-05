@@ -6,11 +6,12 @@ import OrderSummary from './OrderSummary';
 import type { Product, CartItem } from '@/types/order';
 
 const DUMMY_PRODUCTS: Product[] = [
-  { id: 1, name: '커피콩', origin: 'Columbia Nariñó', price: 5000, imageUrl: '' },
+  { id: 1, name: '커피콩', origin: 'Columbia Nariñó',         price: 5000, imageUrl: '' },
   { id: 2, name: '커피콩', origin: 'Brazil Serra Do Caparaó', price: 6000, imageUrl: '' },
-  { id: 3, name: '커피콩', origin: 'Ethiopia Yirgacheffe', price: 7500, imageUrl: '' },
-  { id: 4, name: '커피콩', origin: 'Guatemala Antigua', price: 5500, imageUrl: '' },
-  { id: 5, name: '커피콩', origin: 'Kenya AA', price: 7000, imageUrl: '' },
+  { id: 3, name: '커피콩', origin: 'Ethiopia Yirgacheffe',    price: 7500, imageUrl: '' },
+  { id: 4, name: '커피콩', origin: 'Guatemala Antigua',       price: 5500, imageUrl: '' },
+  { id: 5, name: '커피콩', origin: 'Kenya AA',                price: 7000, imageUrl: '' },
+  { id: 6, name: '커피콩', origin: 'TEST COFFEE',             price: 7000, imageUrl: '' },
 ];
 
 export default function OrderPage() {
@@ -52,36 +53,38 @@ export default function OrderPage() {
     console.log('주문 데이터:', { cart, ...form, total });
   };
 
+  const hasCart = cart.length > 0;
+
   return (
-    <div className="min-h-screen py-14 px-6" style={{ background: 'var(--bg)' }}>
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen pt-6 pb-14 px-6 flex flex-col" style={{ background: 'var(--bg)' }}>
+      <div className="w-full px-4 flex flex-col flex-1">
         {/* 헤더 */}
-        <div className="text-center mb-12">
-          <p className="text-xs font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--accent)' }}>
-            Specialty Coffee
-          </p>
+        <div className="flex items-center mb-3" style={{ gap: 0 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Beantage logo" style={{ height: 80, width: 'auto' }} />
           <h1
-            className="text-5xl font-bold tracking-tight"
+            className="text-5xl font-bold"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
           >
-            Grids & Circle
+            Beantage
           </h1>
-          <div className="mt-4 w-12 h-px mx-auto" style={{ background: 'var(--line)' }} />
         </div>
 
         {/* 메인 레이아웃 */}
-        <div className="grid grid-cols-5 gap-6 items-start">
-          <div className="col-span-3">
+        <div style={{ display: 'flex', gap: 24, alignItems: 'stretch', flex: 1 }}>
+          <div style={{ flex: hasCart ? '3 3 0%' : '1 1 auto', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <ProductList products={DUMMY_PRODUCTS} onAdd={addToCart} />
           </div>
-          <div className="col-span-2">
-            <OrderSummary
-              cart={cart}
-              onUpdateQuantity={updateQuantity}
-              total={total}
-              onCheckout={handleCheckout}
-            />
-          </div>
+          {hasCart && (
+            <div style={{ flex: '2 2 0%', minWidth: 280 }}>
+              <OrderSummary
+                cart={cart}
+                onUpdateQuantity={updateQuantity}
+                total={total}
+                onCheckout={handleCheckout}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

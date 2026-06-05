@@ -9,21 +9,22 @@ function BeanPlaceholder({ origin }: { origin: string }) {
   const label = origin.split(' ')[0].slice(0, 6).toUpperCase();
   return (
     <div
-      className="w-16 h-16 rounded-xl flex-shrink-0 relative overflow-hidden flex flex-col items-center justify-center gap-1"
+      className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-1"
       style={{
+        aspectRatio: '1 / 1',
         background: `repeating-linear-gradient(135deg,
           #e8d5c4 0px, #e8d5c4 11px,
           #dfc9b5 11px, #dfc9b5 22px)`,
       }}
     >
       <span
-        className="text-[9px] font-bold tracking-wider opacity-50 px-1 text-center leading-tight"
+        className="text-xs font-bold tracking-wider opacity-50 text-center leading-tight"
         style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
       >
         {label}
       </span>
       <span
-        className="text-[7px] tracking-wide px-1.5 py-0.5 rounded"
+        className="text-[9px] tracking-wide px-1.5 py-0.5 rounded"
         style={{ background: 'rgba(255,255,255,0.5)', color: 'var(--ink-soft)' }}
       >
         원두 사진
@@ -35,72 +36,93 @@ function BeanPlaceholder({ origin }: { origin: string }) {
 export default function ProductList({ products, onAdd }: Props) {
   return (
     <div
-      className="rounded-2xl p-7"
+      className="rounded-2xl p-6 flex-1"
       style={{
         background: 'var(--surface)',
         border: '1px solid var(--line)',
         boxShadow: '0 1px 2px rgba(46,31,18,.04), 0 8px 28px rgba(46,31,18,.06)',
       }}
     >
-      <h2
-        className="text-xs font-semibold tracking-[0.25em] uppercase mb-6"
-        style={{ color: 'var(--accent)' }}
+      {/* 카드 그리드 */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+          gap: 12,
+        }}
       >
-        상품 목록
-      </h2>
-
-      <div style={{ borderTop: '1px solid var(--line)' }}>
         {products.map((product) => (
-          <div
+          <button
             key={product.id}
-            className="flex items-center gap-4 py-5"
-            style={{ borderBottom: '1px solid var(--line)' }}
+            onClick={() => onAdd(product)}
+            className="text-left rounded-xl overflow-hidden cursor-pointer transition-all"
+            style={{
+              background: 'var(--bg)',
+              border: '1px solid var(--line)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(154,91,52,.15)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--line)';
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
           >
             <BeanPlaceholder origin={product.origin} />
-
-            <div className="flex-1 min-w-0">
+            <div className="p-3">
               <p
-                className="text-[11px] font-semibold tracking-[0.2em] uppercase mb-0.5"
+                className="text-[10px] font-semibold tracking-[0.18em] uppercase mb-0.5"
                 style={{ color: 'var(--muted)' }}
               >
                 {product.name}
               </p>
               <p
-                className="text-sm font-semibold truncate"
+                className="text-xs font-semibold leading-snug mb-1.5"
                 style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
               >
                 {product.origin}
               </p>
+              <p
+                className="text-sm font-bold"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+              >
+                {product.price.toLocaleString()}원
+              </p>
             </div>
-
-            <span
-              className="text-sm font-bold whitespace-nowrap"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+          </button>
+        ))}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`ghost-${i}`}
+            aria-hidden="true"
+            className="rounded-xl overflow-hidden"
+            style={{
+              background: 'var(--bg)',
+              border: '1px solid var(--line)',
+              opacity: 0.35,
+              pointerEvents: 'none',
+            }}
+          >
+            <div
+              className="w-full flex items-center justify-center"
+              style={{ aspectRatio: '1 / 1', background: 'var(--surface-2)' }}
             >
-              {product.price.toLocaleString()}원
-            </span>
-
-            <button
-              onClick={() => onAdd(product)}
-              className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap"
-              style={{
-                border: '1px solid var(--line)',
-                background: 'var(--surface)',
-                color: 'var(--ink-soft)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--ink)';
-                e.currentTarget.style.color = 'var(--bg)';
-                e.currentTarget.style.borderColor = 'var(--ink)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--surface)';
-                e.currentTarget.style.color = 'var(--ink-soft)';
-                e.currentTarget.style.borderColor = 'var(--line)';
-              }}
-            >
-              추가
-            </button>
+              <svg
+                width="36" height="36" viewBox="0 0 36 36" fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line x1="6" y1="6" x2="30" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="30" y1="6" x2="6" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div className="p-3 flex flex-col gap-1.5">
+              <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '55%' }} />
+              <div className="h-2.5 rounded-full" style={{ background: 'var(--line)', width: '75%' }} />
+              <div className="h-3 rounded-full mt-0.5" style={{ background: 'var(--line)', width: '40%' }} />
+            </div>
           </div>
         ))}
       </div>
