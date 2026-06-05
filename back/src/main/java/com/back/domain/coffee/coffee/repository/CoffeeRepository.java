@@ -1,7 +1,9 @@
 package com.back.domain.coffee.coffee.repository;
 
-import com.back.domain.delivery.delivery.entity.Delivery;
+import com.back.domain.coffee.coffee.entity.Coffee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CoffeeRepository extends JpaRepository<Delivery, Long> {
+import java.util.List;
+
+public interface CoffeeRepository extends JpaRepository<Coffee, Long> {
 }
