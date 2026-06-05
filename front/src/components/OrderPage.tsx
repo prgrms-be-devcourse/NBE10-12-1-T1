@@ -53,21 +53,35 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-200 py-12 px-6">
-      <h1 className="text-center text-4xl font-bold mb-10 tracking-tight">
-        Grids & Circle
-      </h1>
-      <div className="max-w-4xl mx-auto grid grid-cols-5 gap-6 items-start">
-        <div className="col-span-3">
-          <ProductList products={DUMMY_PRODUCTS} onAdd={addToCart} />
+    <div className="min-h-screen py-14 px-6" style={{ background: 'var(--bg)' }}>
+      <div className="max-w-4xl mx-auto">
+        {/* 헤더 */}
+        <div className="text-center mb-12">
+          <p className="text-xs font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--accent)' }}>
+            Specialty Coffee
+          </p>
+          <h1
+            className="text-5xl font-bold tracking-tight"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+          >
+            Grids & Circle
+          </h1>
+          <div className="mt-4 w-12 h-px mx-auto" style={{ background: 'var(--line)' }} />
         </div>
-        <div className="col-span-2">
-          <OrderSummary
-            cart={cart}
-            onUpdateQuantity={updateQuantity}
-            total={total}
-            onCheckout={handleCheckout}
-          />
+
+        {/* 메인 레이아웃 */}
+        <div className="grid grid-cols-5 gap-6 items-start">
+          <div className="col-span-3">
+            <ProductList products={DUMMY_PRODUCTS} onAdd={addToCart} />
+          </div>
+          <div className="col-span-2">
+            <OrderSummary
+              cart={cart}
+              onUpdateQuantity={updateQuantity}
+              total={total}
+              onCheckout={handleCheckout}
+            />
+          </div>
         </div>
       </div>
     </div>
