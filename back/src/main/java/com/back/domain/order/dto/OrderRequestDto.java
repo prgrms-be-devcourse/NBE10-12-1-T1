@@ -1,0 +1,7 @@
+package com.back.domain.order.dto;
+
+import java.util.List;
+
+public class OrderRequestDto {
+    public record CreateOrderRequest(String email, String address, List<OrderItemDto> orderItems) {}
+}
