@@ -1,4 +1,4 @@
-package com.back.domain.order.dto;
+package com.back.domain.order.order.dto;
 
 import java.util.List;
 
