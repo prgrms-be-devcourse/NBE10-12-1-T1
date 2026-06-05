@@ -2,8 +2,10 @@ import type { Product } from '@/types/order';
 
 interface Props {
   products: Product[];
-  onAdd: (product: Product) => void;
+  onAdd: (product: Product, e: React.MouseEvent<HTMLButtonElement>) => void;
 }
+
+const MAX_CARDS = 30;
 
 function BeanPlaceholder({ origin }: { origin: string }) {
   const label = origin.split(' ')[0].slice(0, 6).toUpperCase();
@@ -11,7 +13,7 @@ function BeanPlaceholder({ origin }: { origin: string }) {
     <div
       className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-1"
       style={{
-        aspectRatio: '1 / 1',
+        aspectRatio: '4 / 3',
         background: `repeating-linear-gradient(135deg,
           #e8d5c4 0px, #e8d5c4 11px,
           #dfc9b5 11px, #dfc9b5 22px)`,
@@ -34,16 +36,18 @@ function BeanPlaceholder({ origin }: { origin: string }) {
 }
 
 export default function ProductList({ products, onAdd }: Props) {
+  const visibleProducts = products.slice(0, MAX_CARDS);
+  const ghostCount = MAX_CARDS - visibleProducts.length;
+
   return (
     <div
-      className="rounded-2xl p-6 flex-1"
+      className="rounded-2xl p-6 flex-1 overflow-hidden"
       style={{
         background: 'var(--surface)',
         border: '1px solid var(--line)',
         boxShadow: '0 1px 2px rgba(46,31,18,.04), 0 8px 28px rgba(46,31,18,.06)',
       }}
     >
-      {/* 카드 그리드 */}
       <div
         style={{
           display: 'grid',
@@ -51,10 +55,10 @@ export default function ProductList({ products, onAdd }: Props) {
           gap: 12,
         }}
       >
-        {products.map((product) => (
+        {visibleProducts.map((product) => (
           <button
             key={product.id}
-            onClick={() => onAdd(product)}
+            onClick={(e) => onAdd(product, e)}
             className="text-left rounded-xl overflow-hidden cursor-pointer transition-all"
             style={{
               background: 'var(--bg)',
@@ -72,15 +76,15 @@ export default function ProductList({ products, onAdd }: Props) {
             }}
           >
             <BeanPlaceholder origin={product.origin} />
-            <div className="p-3">
+            <div className="p-2.5">
               <p
-                className="text-[10px] font-semibold tracking-[0.18em] uppercase mb-0.5"
+                className="text-[10px] font-semibold tracking-[0.18em] uppercase mb-0.5 truncate"
                 style={{ color: 'var(--muted)' }}
               >
                 {product.name}
               </p>
               <p
-                className="text-xs font-semibold leading-snug mb-1.5"
+                className="text-xs font-semibold leading-snug mb-1 truncate"
                 style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
               >
                 {product.origin}
@@ -94,7 +98,8 @@ export default function ProductList({ products, onAdd }: Props) {
             </div>
           </button>
         ))}
-        {Array.from({ length: 20 }).map((_, i) => (
+
+        {Array.from({ length: ghostCount }).map((_, i) => (
           <div
             key={`ghost-${i}`}
             aria-hidden="true"
@@ -108,20 +113,17 @@ export default function ProductList({ products, onAdd }: Props) {
           >
             <div
               className="w-full flex items-center justify-center"
-              style={{ aspectRatio: '1 / 1', background: 'var(--surface-2)' }}
+              style={{ aspectRatio: '4 / 3', background: 'var(--surface-2)' }}
             >
-              <svg
-                width="36" height="36" viewBox="0 0 36 36" fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
                 <line x1="6" y1="6" x2="30" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
                 <line x1="30" y1="6" x2="6" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
               </svg>
             </div>
-            <div className="p-3 flex flex-col gap-1.5">
+            <div className="p-2.5 flex flex-col gap-1.5">
               <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '55%' }} />
-              <div className="h-2.5 rounded-full" style={{ background: 'var(--line)', width: '75%' }} />
-              <div className="h-3 rounded-full mt-0.5" style={{ background: 'var(--line)', width: '40%' }} />
+              <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '75%' }} />
+              <div className="h-2.5 rounded-full mt-0.5" style={{ background: 'var(--line)', width: '40%' }} />
             </div>
           </div>
         ))}
