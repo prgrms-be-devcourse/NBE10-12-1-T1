@@ -12,11 +12,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CoffeeService {
-
     private final CoffeeRepository coffeeRepository;
 
+    @Transactional(readOnly = true)
     public List<CoffeeResponseDto> getCoffees() {
         return coffeeRepository.findAll()
                 .stream()
@@ -25,10 +24,14 @@ public class CoffeeService {
 
     }
 
+
+    @Transactional(readOnly = true)
     public Optional<Coffee> findLatest() {
         return coffeeRepository.findFirstByOrderByIdDesc();
     }
 
+
+    @Transactional
     public Coffee create(
             String name,
             int price,
