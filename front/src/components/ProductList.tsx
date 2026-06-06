@@ -51,17 +51,12 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
         boxShadow: '0 1px 2px rgba(46,31,18,.04), 0 8px 28px rgba(46,31,18,.06)',
       }}
     >
-      {/* 관리자 툴바 */}
       {isAdmin && (
         <div className="flex justify-end mb-4">
           <button
             onClick={onAddProduct}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer transition-all"
-            style={{
-              background: 'var(--accent)',
-              color: 'white',
-              border: 'none',
-            }}
+            style={{ background: 'var(--accent)', color: 'white', border: 'none' }}
             onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.1)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; }}
           >
@@ -101,7 +96,6 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
             }}
           >
-            {/* 카트 추가 버튼 (카드 전체 영역) */}
             <button
               onClick={(e) => onAdd(product, e)}
               className="w-full text-left cursor-pointer"
@@ -132,7 +126,6 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               </div>
             </button>
 
-            {/* 관리자 수정/삭제 오버레이 */}
             {isAdmin && (
               <div
                 className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
