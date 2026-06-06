@@ -11,8 +11,8 @@ interface Props {
 
 const MAX_CARDS = 40;
 
-function BeanPlaceholder({ origin }: { origin: string }) {
-  const label = origin.split(' ')[0].slice(0, 6).toUpperCase();
+function BeanPlaceholder({ name }: { name: string }) {
+  const label = name.slice(0, 6).toUpperCase();
   return (
     <div
       className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-1"
@@ -107,7 +107,7 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               className="w-full text-left cursor-pointer"
               style={{ background: 'none', border: 'none', padding: 0, display: 'block' }}
             >
-              <BeanPlaceholder origin={product.origin} />
+              <BeanPlaceholder name={product.name} />
               <div className="p-2.5">
                 <p
                   className="text-[10px] font-semibold tracking-[0.18em] uppercase mb-0.5 truncate"
@@ -115,12 +115,14 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
                 >
                   {product.name}
                 </p>
-                <p
-                  className="text-xs font-semibold leading-snug mb-1 truncate"
-                  style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
-                >
-                  {product.origin}
-                </p>
+                {isAdmin && product.stock !== undefined && (
+                  <p
+                    className="text-xs font-semibold leading-snug mb-1 truncate"
+                    style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+                  >
+                    재고 {product.stock}개
+                  </p>
+                )}
                 <p
                   className="text-sm font-bold"
                   style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}

@@ -57,7 +57,7 @@ export default function AdminOrderView({ orders }: Props) {
             {orders.map((order) => {
               const isExpanded = expandedId === order.id;
               const itemSummary = order.items
-                .map((i) => `${i.product.origin.split(' ')[0]} ×${i.quantity}`)
+                .map((i) => `${i.product.name} ×${i.quantity}`)
                 .join(', ');
 
               return (
@@ -129,7 +129,7 @@ export default function AdminOrderView({ orders }: Props) {
                         {order.items.map((item) => (
                           <div key={item.product.id} className="flex justify-between items-center">
                             <span className="text-sm" style={{ color: 'var(--ink)', fontFamily: 'var(--font-display)' }}>
-                              {item.product.origin}
+                              {item.product.name}
                             </span>
                             <span className="text-sm" style={{ color: 'var(--ink-soft)' }}>
                               {item.quantity}개 · {(item.product.price * item.quantity).toLocaleString()}원

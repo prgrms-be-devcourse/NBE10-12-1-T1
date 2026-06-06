@@ -213,7 +213,7 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
                   className="text-sm truncate"
                   style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
                 >
-                  {item.product.origin}
+                  {item.product.name}
                 </span>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <button

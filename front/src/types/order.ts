@@ -1,9 +1,9 @@
 export interface Product {
   id: number;
   name: string;
-  origin: string;
   price: number;
-  imageUrl: string;
+  stock?: number;
+  imgUrl: string;
 }
 
 export interface CartItem {

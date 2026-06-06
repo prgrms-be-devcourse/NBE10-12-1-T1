@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+const API = 'http://localhost:8080';
+
+function toProduct(p: { id: number; name: string; price: number; stock: number; img_url: string | null }) {
+  return { id: p.id, name: p.name, price: p.price, stock: p.stock, imgUrl: p.img_url ?? '' };
+}
 import ProductList from './ProductList';
 import OrderSummary from './OrderSummary';
 import LoginModal from './LoginModal';
@@ -8,22 +14,13 @@ import ProductFormModal from './ProductFormModal';
 import AdminOrderView from './AdminOrderView';
 import type { Product, CartItem, Order, OrderStatus } from '@/types/order';
 
-const DUMMY_PRODUCTS: Product[] = [
-  { id: 1, name: '커피콩', origin: 'Columbia Nariñó',         price: 5000, imageUrl: '' },
-  { id: 2, name: '커피콩', origin: 'Brazil Serra Do Caparaó', price: 6000, imageUrl: '' },
-  { id: 3, name: '커피콩', origin: 'Ethiopia Yirgacheffe',    price: 7500, imageUrl: '' },
-  { id: 4, name: '커피콩', origin: 'Guatemala Antigua',       price: 5500, imageUrl: '' },
-  { id: 5, name: '커피콩', origin: 'Kenya AA',                price: 7000, imageUrl: '' },
-  { id: 6, name: '커피콩', origin: 'TEST COFFEE',             price: 7000, imageUrl: '' },
-];
-
 const DUMMY_ORDERS: Order[] = [
   {
     id: 'ORD-0001',
     createdAt: new Date('2026-06-05T09:14:00'),
     items: [
-      { product: DUMMY_PRODUCTS[0], quantity: 2 },
-      { product: DUMMY_PRODUCTS[2], quantity: 1 },
+      { product: { id: 1, name: '콜롬비아 나리뇨', price: 5000, stock: 0, imgUrl: '' }, quantity: 2 },
+      { product: { id: 3, name: '에티오피아 예가체프', price: 7500, stock: 0, imgUrl: '' }, quantity: 1 },
     ],
     total: 17500,
     email: 'kim@gmail.com',
@@ -35,7 +32,7 @@ const DUMMY_ORDERS: Order[] = [
     id: 'ORD-0002',
     createdAt: new Date('2026-06-05T14:32:00'),
     items: [
-      { product: DUMMY_PRODUCTS[4], quantity: 1 },
+      { product: { id: 5, name: '케냐 AA', price: 7000, stock: 0, imgUrl: '' }, quantity: 1 },
     ],
     total: 7000,
     email: 'park@naver.com',
@@ -47,8 +44,8 @@ const DUMMY_ORDERS: Order[] = [
     id: 'ORD-0003',
     createdAt: new Date('2026-06-06T08:05:00'),
     items: [
-      { product: DUMMY_PRODUCTS[1], quantity: 3 },
-      { product: DUMMY_PRODUCTS[3], quantity: 2 },
+      { product: { id: 2, name: '브라질 세하 두 카파라오', price: 6000, stock: 0, imgUrl: '' }, quantity: 3 },
+      { product: { id: 4, name: '과테말라 안티구아', price: 5500, stock: 0, imgUrl: '' }, quantity: 2 },
     ],
     total: 29000,
     email: 'lee@kakao.com',
@@ -60,7 +57,7 @@ const DUMMY_ORDERS: Order[] = [
     id: 'ORD-0004',
     createdAt: new Date('2026-06-06T11:47:00'),
     items: [
-      { product: DUMMY_PRODUCTS[2], quantity: 1 },
+      { product: { id: 3, name: '에티오피아 예가체프', price: 7500, stock: 0, imgUrl: '' }, quantity: 1 },
     ],
     total: 7500,
     email: 'choi@daum.net',
@@ -119,7 +116,7 @@ function FlyingDot({ startX, startY }: { startX: number; startY: number }) {
 }
 
 export default function OrderPage() {
-  const [products, setProducts] = useState<Product[]>(DUMMY_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>(DUMMY_ORDERS);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -129,6 +126,15 @@ export default function OrderPage() {
   const [flyItems, setFlyItems] = useState<FlyItem[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+
+  const fetchProducts = useCallback((admin: boolean) => {
+    fetch(`${API}${admin ? '/admin/products' : '/products'}`)
+      .then((r) => r.json())
+      .then((json) => setProducts(json.data.map(toProduct)))
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => { fetchProducts(false); }, [fetchProducts]);
 
   const handleAddToCart = (product: Product, e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -169,30 +175,37 @@ export default function OrderPage() {
     );
   };
 
-  const handleSaveProduct = (data: Omit<Product, 'id'>) => {
+  const handleSaveProduct = useCallback(async (data: Omit<Product, 'id'>) => {
     if (editingProduct) {
-      setProducts((prev) =>
-        prev.map((p) => p.id === editingProduct.id ? { ...data, id: editingProduct.id } : p)
-      );
-      setCart((prev) =>
-        prev.map((item) =>
-          item.product.id === editingProduct.id
-            ? { ...item, product: { ...data, id: editingProduct.id } }
-            : item
-        )
-      );
+      const res = await fetch(`${API}/admin/products/${editingProduct.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, img_url: data.imgUrl }),
+      });
+      const json = await res.json();
+      const updated = toProduct(json.data);
+      setProducts((prev) => prev.map((p) => p.id === editingProduct.id ? updated : p));
+      setCart((prev) => prev.map((item) =>
+        item.product.id === editingProduct.id ? { ...item, product: updated } : item
+      ));
       setEditingProduct(null);
     } else {
-      const newId = Math.max(0, ...products.map((p) => p.id)) + 1;
-      setProducts((prev) => [...prev, { ...data, id: newId }]);
+      const res = await fetch(`${API}/admin/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, img_url: data.imgUrl }),
+      });
+      const json = await res.json();
+      setProducts((prev) => [...prev, toProduct(json.data)]);
       setIsAddingProduct(false);
     }
-  };
+  }, [editingProduct]);
 
-  const handleDeleteProduct = (productId: number) => {
+  const handleDeleteProduct = useCallback(async (productId: number) => {
+    await fetch(`${API}/admin/products/${productId}`, { method: 'DELETE' });
     setProducts((prev) => prev.filter((p) => p.id !== productId));
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
-  };
+  }, []);
 
   const handleCheckout = (form: { email: string; address: string; zipcode: string }) => {
     const newOrder: Order = {
@@ -219,6 +232,7 @@ export default function OrderPage() {
     if (adminStatus) {
       setCart([]);
       setIsOpen(false);
+      fetchProducts(true);
     }
   };
 
@@ -253,8 +267,13 @@ export default function OrderPage() {
             )}
             <button
               onClick={() => {
-                if (isAdmin) { setIsAdmin(false); setAdminTab('products'); }
-                else setIsLoginOpen(true);
+                if (isAdmin) {
+                  setIsAdmin(false);
+                  setAdminTab('products');
+                  fetchProducts(false);
+                } else {
+                  setIsLoginOpen(true);
+                }
               }}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all"
               style={{

@@ -23,16 +23,17 @@ interface Props {
 
 export default function ProductFormModal({ product, onSave, onClose }: Props) {
   const [name, setName] = useState(product?.name ?? '');
-  const [origin, setOrigin] = useState(product?.origin ?? '');
   const [price, setPrice] = useState(product?.price.toString() ?? '');
+  const [stock, setStock] = useState(product?.stock?.toString() ?? '');
 
   const isEdit = !!product;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const parsedPrice = parseInt(price.replace(/,/g, ''), 10);
-    if (!name.trim() || !origin.trim() || isNaN(parsedPrice) || parsedPrice <= 0) return;
-    onSave({ name: name.trim(), origin: origin.trim(), price: parsedPrice, imageUrl: product?.imageUrl ?? '' });
+    const parsedStock = parseInt(stock, 10);
+    if (!name.trim() || isNaN(parsedPrice) || parsedPrice <= 0 || isNaN(parsedStock) || parsedStock < 0) return;
+    onSave({ name: name.trim(), price: parsedPrice, stock: parsedStock, imgUrl: product?.imgUrl ?? '' });
   };
 
   return (
@@ -88,14 +89,15 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
 
           <div>
             <label className="block text-xs font-semibold tracking-wide uppercase mb-2" style={{ color: 'var(--muted)' }}>
-              원산지
+              재고 (개)
             </label>
             <input
-              type="text"
-              value={origin}
-              onChange={(e) => setOrigin(e.target.value)}
+              type="number"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
               style={inputStyle}
-              placeholder="예: Ethiopia Yirgacheffe"
+              placeholder="예: 100"
+              min={0}
               onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; }}
               onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--line)'; }}
               required
