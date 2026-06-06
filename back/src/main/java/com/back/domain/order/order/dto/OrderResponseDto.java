@@ -12,7 +12,6 @@ public record OrderResponseDto(Long id,
                                String address,
                                List<OrderItemResponseDto> orderItems,
                                Integer totalPrice,
-                               Boolean shipped,
                                LocalDateTime createdAt) {
     public static OrderResponseDto from(Order order) {
         List<OrderItemResponseDto> items = new ArrayList<>();
@@ -20,7 +19,7 @@ public record OrderResponseDto(Long id,
 
         for(OrderItem orderItem : order.getOrderItems()) {
             items.add(new OrderItemResponseDto(
-                    orderItem.getCoffeeName(),
+                    orderItem.getCoffee().getName(),
                     orderItem.getAmount(),
                     orderItem.getPrice()
             ));
@@ -33,7 +32,6 @@ public record OrderResponseDto(Long id,
                 order.getAddress(),
                 items,
                 totalPrice,
-                order.isShipped(),
                 order.getCreatedAt()
         );
     }

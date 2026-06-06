@@ -1,5 +1,6 @@
 package com.back.domain.orderItem.orderItem.entity;
 
+import com.back.domain.coffee.coffee.entity.Coffee;
 import com.back.domain.order.order.entity.Order;
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -15,8 +16,9 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "orderId")
     private Order order;
 
-    @Column
-    private String coffeeName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coffeeId")
+    private Coffee coffee;
 
     @Column
     private int amount;
