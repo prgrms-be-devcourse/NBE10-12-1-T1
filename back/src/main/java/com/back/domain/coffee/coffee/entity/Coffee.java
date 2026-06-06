@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Coffee extends BaseEntity {
     @Column(nullable = false)
     private String name;
