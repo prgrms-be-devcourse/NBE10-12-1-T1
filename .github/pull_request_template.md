@@ -9,4 +9,4 @@
 
 ### 3. 해결하는 WBS 작업
 
-- ex. `[#67](https://www.notion.so/PR-WBS-37715a01205480a19db4e9f1df7489b3?source=copy_link)`
+- ex. `[[#67] PR 템플릿 수정(WBS 작업 연결)](https://www.notion.so/PR-WBS-37715a01205480a19db4e9f1df7489b3?source=copy_link)`
