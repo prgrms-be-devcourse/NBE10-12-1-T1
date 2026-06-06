@@ -28,4 +28,14 @@ public class CoffeeService {
     public Optional<Coffee> findLatest() {
         return coffeeRepository.findFirstByOrderByIdDesc();
     }
+
+    public Coffee create(
+            String name,
+            int price,
+            int stock,
+            String imgUrl
+    ) {
+        final Coffee coffee = new Coffee(name, price, stock, imgUrl);
+        return coffeeRepository.save(coffee);
+    }
 }
