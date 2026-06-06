@@ -1,41 +1,45 @@
 package com.back.domain.order.order.dto;
 
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import com.back.domain.order.order.entity.Order;
+import com.back.domain.orderItem.orderItem.entity.OrderItem;
+
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-public class OrderResponseDto {
-    public record OrderResponse(
-            @NotNull
-            Long id,
-            @NotNull
-            String email,
-            @NotNull
-            String address,
-            @NotEmpty
-            List<OrderItemResponseDto> orderItems, // 응답용 상세 DTO 리스트
-            @NotNull
-            Integer totalPrice,                    // 총 결제 금액
-            @NotNull
-            LocalDateTime createdAt) {}
+public record OrderResponseDto(Long id,
+                               String email,
+                               String address,
+                               List<OrderItemResponseDto> orderItems,
+                               Integer totalPrice,
+                               LocalDateTime createdAt) {
+    public static OrderResponseDto from(Order order) {
+        List<OrderItemResponseDto> items = new ArrayList<>();
+        int totalPrice = 0;
 
-    public record OrderWithIsShippedResponse(
-            @NotNull
-            Long id,
-            @NotNull
-            String email,
-            @NotNull
-            String address,
-            @NotEmpty
-            List<OrderItemResponseDto> orderItems, // 응답용 상세 DTO 리스트
-            @NotNull
-            Integer totalPrice,                    // 총 결제 금액
-            @NotNull
-            Boolean isShipped,
-            @NotNull
-            LocalDateTime createdAt) {}
+        for(OrderItem orderItem : order.getOrderItems()) {
+            items.add(new OrderItemResponseDto(
+                    orderItem.getCoffee().getName(),
+                    orderItem.getAmount(),
+                    orderItem.getPrice()
+            ));
+            totalPrice += orderItem.getPrice() * orderItem.getAmount();
+        }
+
+        return new OrderResponseDto(
+                (long) order.getId(),
+                order.getEmail(),
+                order.getAddress(),
+                items,
+                totalPrice,
+                order.getCreatedAt()
+        );
+    }
 }
 
 

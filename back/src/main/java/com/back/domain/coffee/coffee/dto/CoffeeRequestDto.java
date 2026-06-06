@@ -28,4 +28,4 @@ public class CoffeeRequestDto {
 
             String imgUrl
     ) {}
-}
+
