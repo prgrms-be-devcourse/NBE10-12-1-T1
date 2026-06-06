@@ -1,7 +1,12 @@
 package com.back.domain.order.order.dto;
 
+
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import com.back.domain.order.order.entity.Order;
 import com.back.domain.orderItem.orderItem.entity.OrderItem;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,3 +41,5 @@ public record OrderResponseDto(Long id,
         );
     }
 }
+
+
