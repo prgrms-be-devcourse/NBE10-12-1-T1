@@ -19,12 +19,12 @@ public class OrderController {
     @GetMapping("/orders")
     public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
         List<OrderResponseDto> orders = orderService.adminOrderList();
-        return ResponseEntity.ok(new ResponseDto<>(200, "주문 목록 조회 완료", orders));
+        return ResponseEntity.ok(new ResponseDto<>("200", "주문 목록 조회 완료", orders));
     }
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<Void>> login(@RequestBody AdminLoginRequestDto requestDto) {
         orderService.login(requestDto);
-        return ResponseEntity.ok(new ResponseDto<>(200-1, "로그인 되었습니다.", null));
+        return ResponseEntity.ok(new ResponseDto<>("200-1", "로그인 되었습니다.", null));
     }
 }

@@ -65,7 +65,7 @@ class OrderControllerTest {
         mockMvc.perform(get("/admin/orders"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.resultCode").value("200"))
                 .andExpect(jsonPath("$.message").value("주문 목록 조회 완료"))
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].id").value(1))
@@ -89,7 +89,7 @@ class OrderControllerTest {
                         .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200-1))
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("로그인 되었습니다."))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
