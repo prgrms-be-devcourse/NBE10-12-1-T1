@@ -1,4 +1,4 @@
 package com.back.global.dto;
 
-public record ResponseDto<T>(String resultCode, String message, T data) {
+public record ResponseDto<T>(int status, String message, T data) {
 }

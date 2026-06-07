@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +19,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,26 +59,38 @@ class OrderControllerTest {
         when(order.getCreatedAt()).thenReturn(
                 LocalDateTime.of(2026, 6, 5, 12, 12, 12)
         );
-        when(order.getOrderItems())
-                .thenReturn(List.of(firstItem, secondItem));
-
+        when(order.getOrderItems()).thenReturn(List.of(firstItem, secondItem));
         when(orderRepository.findAll()).thenReturn(List.of(order));
 
         mockMvc.perform(get("/admin/orders"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.message")
-                        .value("주문 목록 조회 완료"))
+                .andExpect(jsonPath("$.message").value("주문 목록 조회 완료"))
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].id").value(1))
-                .andExpect(jsonPath("$.data[0].email")
-                        .value("input@naver.com"))
-                .andExpect(jsonPath("$.data[0].orderItems.length()")
-                        .value(2))
-                .andExpect(jsonPath("$.data[0].orderItems[0].name")
-                        .value("맛있는 원두"))
-                .andExpect(jsonPath("$.data[0].totalPrice")
-                        .value(65_000));
+                .andExpect(jsonPath("$.data[0].email").value("input@naver.com"))
+                .andExpect(jsonPath("$.data[0].orderItems.length()").value(2))
+                .andExpect(jsonPath("$.data[0].orderItems[0].name").value("맛있는 원두"))
+                .andExpect(jsonPath("$.data[0].totalPrice").value(65_000));
+    }
+
+    @Test
+    void adminLogin() throws Exception {
+        String body = """
+                {
+                    "id": "admin",
+                    "password": "admin"
+                }
+                """;
+
+        mockMvc.perform(post("/admin/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200-1))
+                .andExpect(jsonPath("$.message").value("로그인 되었습니다."))
+                .andExpect(jsonPath("$.data").doesNotExist());
     }
 }
