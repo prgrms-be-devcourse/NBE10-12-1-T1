@@ -14,18 +14,18 @@ public class CoffeeRequestDto {
             @NotNull(message = "초기 재고는 필수입니다.")
             @Min(value = 0, message = "재고는 0개 이상이어야 합니다.")
             Integer stock,
-
             String imgUrl
     ) {}
 
     public record PatchCoffeeRequest(
+            // NotBlank : null, "", " " 불가
+            // 해당 패턴 : "", " " 불가 (패치로 처리를 하다보니 null은 들어올 수 있어야함)
             @Pattern(regexp = ".*\\S.*", message = "이름을 빈칸으로 수정할 수 없습니다.")
             String name,
             @Min(value = 0, message = "가격은 0원 이상이어야 합니다.")
             Integer price,
             @Min(value = 0, message = "재고는 0개 이상이어야 합니다.")
             Integer stock,
-
             String imgUrl
     ) {}
-
+}
