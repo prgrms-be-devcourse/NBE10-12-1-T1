@@ -16,7 +16,8 @@ public class CoffeeRequestDto {
             Integer stock,
 
             String imgUrl
-    ) {}
+    ) {
+    }
 
     public record PatchCoffeeRequest(
             @Pattern(regexp = ".*\\S.*", message = "이름을 빈칸으로 수정할 수 없습니다.")
@@ -27,5 +28,7 @@ public class CoffeeRequestDto {
             Integer stock,
 
             String imgUrl
-    ) {}
+    ) {
+    }
+}
 
