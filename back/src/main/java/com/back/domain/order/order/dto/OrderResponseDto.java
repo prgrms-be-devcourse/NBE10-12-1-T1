@@ -20,6 +20,8 @@ public record OrderResponseDto(Long id,
                                LocalDateTime createdAt) {
     public static OrderResponseDto from(Order order) {
         List<OrderItemResponseDto> items = new ArrayList<>();
+
+        //해당 값은 stream 내부에서는 외부값 수정하면 안되는 규약이 있어서 만드신거죠??
         int totalPrice = 0;
 
         for(OrderItem orderItem : order.getOrderItems()) {
@@ -31,6 +33,7 @@ public record OrderResponseDto(Long id,
             totalPrice += orderItem.getPrice() * orderItem.getAmount();
         }
 
+        // 혹시 long으로 강제cast를 하신 이유가 있을까요??
         return new OrderResponseDto(
                 (long) order.getId(),
                 order.getEmail(),

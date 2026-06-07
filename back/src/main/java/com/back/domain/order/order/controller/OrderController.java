@@ -21,9 +21,10 @@ public class OrderController {
     public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
         List<OrderResponseDto> orders = orderService.adminOrderList();
 
+        // ResponseDto 내부에 int status --> String resultCode로 변경에 따른 수정
         return ResponseEntity.ok(
                 new ResponseDto<>(
-                        200,
+                        "200-1",
                         "주문 목록 조회 완료",
                         orders
                 )
