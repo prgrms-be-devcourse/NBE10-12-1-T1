@@ -21,6 +21,7 @@ public class CoffeeController {
     @GetMapping
     public ResponseEntity<ResponseDto<List<CoffeeResponseDto>>> getCoffees() {
         List<CoffeeResponseDto> coffees = coffeeService.getCoffees();
-        return ResponseEntity.ok(new ResponseDto<>(200, "상품 목록 조회 성공", coffees));
+        // ResponseDto 내부에 int status --> String resultCode로 변경에 따른 수정
+        return ResponseEntity.ok(new ResponseDto<>("200-1", "상품 목록 조회 성공", coffees));
     }
 }
