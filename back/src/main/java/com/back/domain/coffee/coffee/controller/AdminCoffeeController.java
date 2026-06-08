@@ -4,13 +4,13 @@ import com.back.domain.coffee.coffee.dto.CoffeeRequestDto;
 import com.back.domain.coffee.coffee.dto.CoffeeResponseDto;
 import com.back.domain.coffee.coffee.entity.Coffee;
 import com.back.domain.coffee.coffee.service.CoffeeService;
+import com.back.global.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -45,5 +45,10 @@ public class AdminCoffeeController {
                 ),
                 CREATED
         );
+    }
+    @GetMapping
+    public ResponseEntity<ResponseDto<List<CoffeeResponseDto>>> getCoffees() {
+        List<CoffeeResponseDto> coffees = coffeeService.getCoffees();
+        return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", coffees));
     }
 }

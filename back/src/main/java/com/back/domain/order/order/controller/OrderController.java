@@ -26,5 +26,6 @@ public class OrderController {
     public ResponseEntity<ResponseDto<Void>> login(@RequestBody AdminLoginRequestDto requestDto) {
         orderService.login(requestDto);
         return ResponseEntity.ok(new ResponseDto<>("200-1", "로그인 되었습니다.", null));
+
     }
 }
