@@ -19,7 +19,7 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "productId")
     private Product product;
 
-    @Column
+    private int price;
     private int amount;
 
     @Column
@@ -29,8 +29,22 @@ public class OrderItem extends BaseEntity {
         OrderItem orderItem = new OrderItem();
         orderItem.order = order;
         orderItem.product = product;
+        return orderItem;
+    }
+
+    public static OrderItem create(int price, int amount) {
+        OrderItem orderItem = new OrderItem();
         orderItem.amount = amount;
         orderItem.price = price;
         return orderItem;
     }
+
+    public void assignOrder(Order order) {
+        this.order = order;
+    }
+
+    public void assignProduct(Product product) {
+        this.product = product;
+    }
+
 }

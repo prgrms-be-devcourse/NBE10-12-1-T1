@@ -30,6 +30,7 @@ public class Order extends BaseEntity {
     )
     private List<OrderItem> orderItems = new ArrayList<>();
 
+
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
     }
@@ -38,6 +39,16 @@ public class Order extends BaseEntity {
         Order order = new Order();
         order.email = email;
         order.address = address;
+        return order;
+    }
+
+    public static Order create(String email, String address, List<OrderItem> orderItems) {
+        Order order = new Order();
+        order.email = email;
+        order.address = address;
+        for (OrderItem orderItem : orderItems) {
+            orderItem.assignOrder(order);
+        }
         return order;
     }
 }
