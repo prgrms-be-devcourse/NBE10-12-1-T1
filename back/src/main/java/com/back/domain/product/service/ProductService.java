@@ -48,7 +48,7 @@ public class ProductService {
         return productRepository.save(product);
     }
     @Transactional
-    public Product update(Long id, String name, int price, int stock, String imgUrl) {
+    public Product update(Long id, String name, Integer price, Integer stock, String imgUrl) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
         product.update(name, price, stock, imgUrl);

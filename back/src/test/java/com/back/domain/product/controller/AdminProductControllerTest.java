@@ -25,9 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class AdminProductControllerTest {
     @Autowired
-    private  MockMvc mockMvc;
+    private MockMvc mockMvc;
     @Autowired
-    private  ProductService productService;
+    private ProductService productService;
 
     @Test
     @DisplayName("POST /admin/products")
@@ -88,7 +88,7 @@ public class AdminProductControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /admin/product/{id} - 상품 수정")
+    @DisplayName("PATCH /admin/product/{id} - 이름만 수정")
     void updateProduct() throws Exception {
         final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
 
@@ -96,15 +96,60 @@ public class AdminProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                    "name" : "더 맛있는 커피",
-                                    "price" : 20000,
-                                    "stock" : 10,
-                                    "imgUrl" : "coffee.jpg"
+                                    "name" : "더 맛있는 커피"
                                     }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-2"))
                 .andExpect(jsonPath("$.data.name").value("더 맛있는 커피"));
+    }
+
+    @Test
+    @DisplayName("PATCH /admin/products/{id} - 가격만 수정")
+    void updateProduct2() throws Exception {
+        final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
+        mockMvc.perform(patch("/admin/products/" + product.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "price" : 25000
+                                    }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-2"))
+                .andExpect(jsonPath("$.data.price").value(25000));
+    }
+
+    @Test
+    @DisplayName("PATCH /admin/products/{id} - 재고만 수정")
+    void updateProduct3() throws Exception {
+        final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
+        mockMvc.perform(patch("/admin/products/" + product.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "stock" : 100
+                                    }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-2"))
+                .andExpect(jsonPath("$.data.stock").value(100));
+    }
+
+    @Test
+    @DisplayName("PATCH /admin/products/{id} - 이미지만 수정")
+    void updateProduct4() throws Exception {
+        final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
+        mockMvc.perform(patch("/admin/products/" + product.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "imgUrl" : "coffee2.jpg"
+                                    }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-2"))
+                .andExpect(jsonPath("$.data.imgUrl").value("coffee2.jpg"));
     }
 }
 
