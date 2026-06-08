@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/admin/products")
@@ -58,5 +58,22 @@ public class AdminProductController {
     public ResponseEntity<ResponseDto<List<ProductResponseDto>>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
         return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", products));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "관리자 상품 제거")
+    public ResponseEntity<TempResponseDto<Void>> delete(@PathVariable Long id) {
+        Product product = productService.findById(id).get();
+
+        productService.delete(product);
+
+        return new ResponseEntity<>(
+                new TempResponseDto<>(
+                        "200-1",
+                        "상품이 삭제되었습니다",
+                        null
+                ),
+                OK
+        );
     }
 }

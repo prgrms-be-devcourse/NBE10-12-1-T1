@@ -47,4 +47,12 @@ public class ProductService {
         // Controller로 넘기는게 더 안전하다고하네용?? 허헣 덕분에 배워갑니다.
         return productRepository.save(product);
     }
+
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
+    }
+
+    public void delete(Product product) {
+        productRepository.delete(product);
+    }
 }
