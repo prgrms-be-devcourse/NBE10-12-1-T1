@@ -5,6 +5,8 @@ import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
 import com.back.global.dto.ResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RestController
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
+@Tag(name = "AdminProductController", description = "관리자 상품 컨트롤러")
 public class AdminProductController {
     private final ProductService productService;
 
@@ -29,6 +32,7 @@ public class AdminProductController {
 
     // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ ProductRequestDto.*;
     @PostMapping
+    @Operation(summary = "관리자 상품 추가")
     private ResponseEntity<TempResponseDto<ProductResponseDto>> create(
             @RequestBody @Valid CreateProductRequest requestDto
     ) {
@@ -49,6 +53,7 @@ public class AdminProductController {
         );
     }
     @GetMapping
+    @Operation(summary = "관리자 상품 목록 조회")
     public ResponseEntity<ResponseDto<List<ProductResponseDto>>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
         return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", products));
