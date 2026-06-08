@@ -24,10 +24,17 @@ import static org.springframework.http.HttpStatus.*;
 public class AdminProductController {
     private final ProductService productService;
 
+    public record TempResponseDto<T>(
+            String resultCode,
+            String message,
+            T data
+    ) {
+    }
+
     // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ ProductRequestDto.*;
     @PostMapping
     @Operation(summary = "관리자 상품 추가")
-    private ResponseEntity<ResponseDto<ProductResponseDto>> create(
+    private ResponseEntity<TempResponseDto<ProductResponseDto>> create(
             @RequestBody @Valid CreateProductRequest requestDto
     ) {
         //이렇게 쓰는것도 좋은데 예를 들어서 필드 7~8개되면 어떻게 될까용??
@@ -38,7 +45,7 @@ public class AdminProductController {
                 requestDto.imgUrl()
         );
         return new ResponseEntity<>(
-                new ResponseDto<>(
+                new TempResponseDto<>(
                         "201-1",
                         "상품이 추가되었습니다",
                         ProductResponseDto.from(product)
@@ -70,13 +77,13 @@ public class AdminProductController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "관리자 상품 제거")
-    public ResponseEntity<ResponseDto<Void>> delete(@PathVariable Long id) {
+    public ResponseEntity<TempResponseDto<Void>> delete(@PathVariable Long id) {
         Product product = productService.findById(id).get();
 
         productService.delete(product);
 
         return new ResponseEntity<>(
-                new ResponseDto<>(
+                new TempResponseDto<>(
                         "200-1",
                         "상품이 삭제되었습니다",
                         null
