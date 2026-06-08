@@ -24,4 +24,13 @@ public class OrderItem extends BaseEntity {
 
     @Column
     private int price;
+
+    public static OrderItem create(Order order, Product product, int amount, int price) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.order = order;
+        orderItem.product = product;
+        orderItem.amount = amount;
+        orderItem.price = price;
+        return orderItem;
+    }
 }
