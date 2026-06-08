@@ -37,7 +37,7 @@ public class CoffeeControllerTest {
 
         mockMvc.perform(get("/coffees"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.resultCode").value("200"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.data[0].name").value("맛있는 원두"))

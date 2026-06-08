@@ -1,0 +1,8 @@
+#!/bin/bash
+  COMMIT_MSG=$(cat "$1")
+  PATTERN="^(feat|fix|refactor|docs|test|chore|style|hotfix)/[0-9]+/.+"
+
+  if ! echo "$COMMIT_MSG" | grep -qE "$PATTERN"; then
+      echo "커밋 메세지 형식 오류: feat/20/내용 형식으로 작성해주세요"
+      exit 1
+  fi

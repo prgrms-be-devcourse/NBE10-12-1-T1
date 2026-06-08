@@ -15,7 +15,8 @@ public class CoffeeRequestDto {
             @Min(value = 0, message = "재고는 0개 이상이어야 합니다.")
             Integer stock,
             String imgUrl
-    ) {}
+    ) {
+    }
 
     public record PatchCoffeeRequest(
             // NotBlank : null, "", " " 불가
@@ -29,3 +30,4 @@ public class CoffeeRequestDto {
             String imgUrl
     ) {}
 }
+
