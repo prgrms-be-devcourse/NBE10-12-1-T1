@@ -8,6 +8,7 @@ import com.back.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class OrderController {
     @Operation(summary = "주문 생성")
     public ResponseEntity<ResponseDto<OrderResponseDto>> createOrder(@RequestBody CreateOrderRequest requestDto) {
         OrderResponseDto response = orderService.createOrder(requestDto);
-        return ResponseEntity.ok(new ResponseDto<>("200-1", "주문 생성 되었습니다.", response));
+        return new ResponseEntity<>(new ResponseDto<>("201-1", "주문 생성 되었습니다.", response), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
