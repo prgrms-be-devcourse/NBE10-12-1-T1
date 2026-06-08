@@ -21,9 +21,7 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private int stock;
 
-    @Column(nullable = false) // 이거 null이면 안될까용?
     private String imgUrl;
-
 
     public void update(String name, Integer price, Integer stock, String imgUrl) {
         if (name != null) this.name = name;
