@@ -53,12 +53,14 @@ public class AdminProductController {
                 CREATED
         );
     }
+
     @GetMapping
     @Operation(summary = "관리자 상품 목록 조회")
     public ResponseEntity<ResponseDto<List<ProductResponseDto>>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
         return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", products));
     }
+
     @PatchMapping("/{id}")
     private ResponseEntity<ResponseDto<ProductResponseDto>> update(
             @PathVariable("id") Long id,
