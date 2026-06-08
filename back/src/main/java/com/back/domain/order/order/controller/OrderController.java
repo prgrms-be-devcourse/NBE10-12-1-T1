@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 @Tag(name = "관리자 시스템 및 주문 관리", description = "관리자 권한 로그인 및 전체 주문 목록 조회")
+
 public class OrderController {
     private final OrderService orderService;
 
