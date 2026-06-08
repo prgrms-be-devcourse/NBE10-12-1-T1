@@ -27,6 +27,7 @@ public class OrderController {
         return ResponseEntity.ok(new ResponseDto<>("200-1", "주문 목록 조회 완료", orders));
     }
 
+    // [임시] 프론트엔드에서 하드코딩된 값으로 로그인 모방 → 실제 로그인 API 미사용
     @PostMapping("/login")
     @Operation(summary = "관리자 로그인")
     public ResponseEntity<ResponseDto<Void>> login(@RequestBody AdminLoginRequestDto requestDto) {
