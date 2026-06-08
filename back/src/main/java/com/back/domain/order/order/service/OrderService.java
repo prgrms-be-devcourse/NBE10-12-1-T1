@@ -1,19 +1,28 @@
 package com.back.domain.order.order.service;
 
 import com.back.domain.order.order.dto.AdminLoginRequestDto;
+import com.back.domain.order.order.dto.OrderRequestDto.*;
 import com.back.domain.order.order.dto.OrderResponseDto;
+import com.back.domain.order.order.entity.Order;
 import com.back.domain.order.order.repository.OrderRepository;
+import com.back.domain.order.orderItem.entity.OrderItem;
+import com.back.domain.product.entity.Product;
+import com.back.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 //@Transactional 이건 어떠실까용?? ProductService에 있는 내용과 동일합니당
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
 
     private static final String ADMIN_ID = "admin";
     private static final String ADMIN_PW = "admin";
@@ -24,6 +33,21 @@ public class OrderService {
                 .stream()
                 .map(OrderResponseDto::from)
                 .toList();
+    }
+
+    @Transactional
+    public OrderResponseDto createOrder(CreateOrderRequest requestDto) {
+        List<Long> productIds = requestDto.orderItems().stream()
+                .map(item -> item.productId()).toList();
+        Map<Long, Product> productMap = productIds.stream().map(id ->
+                        productRepository.findById(id)
+                                .orElseThrow(NoSuchElementException::new))
+                .collect(Collectors.toMap(Product::getId, p -> p));
+
+        requestDto.orderItems().stream().map(item -> {
+            OrderItem.create(productMap.get(item.productId()).getPrice(), item.amount());
+        })
+
     }
 
     public void login(AdminLoginRequestDto requestDto) {
