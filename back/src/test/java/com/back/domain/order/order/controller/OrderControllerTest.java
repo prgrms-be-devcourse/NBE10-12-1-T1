@@ -69,36 +69,36 @@ class OrderControllerTest {
     @Test
     @DisplayName("POST /orders")
     void createOrderTest() throws Exception {
-        productRepository.save(new Product("맛있는 원두", 2000, 10, "image.com"));
-        productRepository.save(new Product("맛없는 원두", 3000, 20, "image.com"));
-
+        Long p1Id = productRepository.save(new Product("맛있는 원두", 2000, 10, "image.com")).getId();
+        Long p2Id = productRepository.save(new Product("맛없는 원두", 3000, 20, "image.com")).getId();
+        String requestBody = String.format("{" +
+                "\"email\" : \"input@naver.com\"," +
+                "\"address\": \"서울 OO구 OO로, OO아파트 OO동 OO호\"," +
+                "\"orderItems\" : [ "+
+                "    {" +
+                "    \"productId\": %d," +
+                "    \"amount\": 10" +
+                "  }," +
+                "  {\n" +
+                "    \"productId\": %d," +
+                "    \"amount\": 15" +
+                "  }" +
+                "]" +
+                "}",p1Id,p2Id);
         mockMvc.perform(
                 post("/orders")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"email\" : \"input@naver.com\"," +
-                                "\"address\": \"서울 OO구 OO로, OO아파트 OO동 OO호\"," +
-                                "\"orderItems\" : [ "+
-                                "    {" +
-                                "    \"productId\": 1," +
-                                "    \"amount\": 10" +
-                                "  }," +
-                                "  {\n" +
-                                "    \"productId\": 2," +
-                                "    \"amount\": 15" +
-                                "  }" +
-                                "]" +
-                                "}")
+                        .content(requestBody)
                 )
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.id").value(1L))
+                .andExpect(jsonPath("$.data.id").exists())
                 .andExpect(jsonPath("$.data.email").value("input@naver.com"))
                 .andExpect(jsonPath("$.data.address").value("서울 OO구 OO로, OO아파트 OO동 OO호"))
                 .andExpect(jsonPath("$.data.orderItems[0].name").value("맛있는 원두"))
                 .andExpect(jsonPath("$.data.orderItems[0].amount").value(10))
                 .andExpect(jsonPath("$.data.orderItems[0].price").value(2000));
-        Product product1 = productRepository.findById(1L).get();
-        Product product2 = productRepository.findById(2L).get();
+        Product product1 = productRepository.findById(p1Id).get();
+        Product product2 = productRepository.findById(p2Id).get();
         Assertions.assertEquals(0,product1.getStock());
         Assertions.assertEquals(5,product2.getStock());
     }
