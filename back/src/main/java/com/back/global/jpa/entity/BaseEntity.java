@@ -15,7 +15,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int id;
+    private long id;
 
     @CreatedDate
     @Column(updatable = false)

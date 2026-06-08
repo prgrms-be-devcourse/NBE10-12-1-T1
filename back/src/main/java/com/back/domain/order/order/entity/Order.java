@@ -15,7 +15,7 @@ import java.util.List;
 // order는 SQL 예약어라 에러 발생하여 Table 생성이 안된다고 합니다
 
 @Entity
-@Table(name = "Order")
+@Table(name = "Orders")
 @Getter
 @NoArgsConstructor
 public class Order extends BaseEntity {

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record CoffeeResponseDto (
         @NotNull
-        int id,
+        Long id,
         @NotNull
         String name,
         @NotNull
