@@ -67,13 +67,13 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("POST /admin/orders")
+    @DisplayName("POST /orders")
     void createOrderTest() throws Exception {
         productRepository.save(new Product("맛있는 원두", 2000, 10, "image.com"));
         productRepository.save(new Product("맛없는 원두", 3000, 20, "image.com"));
 
         mockMvc.perform(
-                post("/admin/orders")
+                post("/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "\"email\" : \"input@naver.com\"," +

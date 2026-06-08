@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("")
 @RequiredArgsConstructor
 @Tag(name = "관리자 시스템 및 주문 관리", description = "관리자 권한 로그인 및 전체 주문 목록 조회")
 
 public class OrderController {
     private final OrderService orderService;
 
-    @GetMapping("/orders")
+    @GetMapping("/admin/orders")
     @Operation(summary = "주문 목록 조회")
     public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
         List<OrderResponseDto> orders = orderService.adminOrderList();
@@ -36,7 +36,7 @@ public class OrderController {
         return new ResponseEntity<>(new ResponseDto<>("201-1", "주문 생성 되었습니다.", response), HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/admin/login")
     @Operation(summary = "관리자 로그인")
     public ResponseEntity<ResponseDto<Void>> login(@RequestBody AdminLoginRequestDto requestDto) {
         orderService.login(requestDto);
