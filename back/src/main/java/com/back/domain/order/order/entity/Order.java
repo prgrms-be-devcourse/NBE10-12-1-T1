@@ -1,4 +1,4 @@
-package com.back.domain.order.entity;
+package com.back.domain.order.order.entity;
 
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Entity;

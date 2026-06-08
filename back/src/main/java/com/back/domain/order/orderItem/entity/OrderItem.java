@@ -1,4 +1,4 @@
-package com.back.domain.orderItem.orderItem.entity;
+package com.back.domain.order.orderItem.entity;
 
 import com.back.domain.coffee.coffee.entity.Coffee;
 import com.back.domain.order.order.entity.Order;
