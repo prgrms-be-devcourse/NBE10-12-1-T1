@@ -1,6 +1,6 @@
 package com.back.domain.order.order.entity;
 
-import com.back.domain.orderItem.orderItem.entity.OrderItem;
+import com.back.domain.order.orderItem.entity.OrderItem;
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -15,7 +15,7 @@ import java.util.List;
 // order는 SQL 예약어라 에러 발생하여 Table 생성이 안된다고 합니다
 
 @Entity
-@Table(name = "Order")
+@Table(name = "Orders")
 @Getter
 @NoArgsConstructor
 public class Order extends BaseEntity {

@@ -1,9 +1,9 @@
-package com.back.domain.coffee.coffee.controller;
+package com.back.domain.product.controller;
 
-import com.back.domain.coffee.coffee.dto.CoffeeRequestDto.*;
-import com.back.domain.coffee.coffee.dto.CoffeeResponseDto;
-import com.back.domain.coffee.coffee.entity.Coffee;
-import com.back.domain.coffee.coffee.service.CoffeeService;
+import com.back.domain.product.dto.ProductRequestDto.*;
+import com.back.domain.product.dto.ProductResponseDto;
+import com.back.domain.product.entity.Product;
+import com.back.domain.product.service.ProductService;
 import com.back.global.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +15,10 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
-@RequestMapping("/admin/coffees")
+@RequestMapping("/admin/products")
 @RequiredArgsConstructor
-public class AdminCoffeeController {
-    private final CoffeeService coffeeService;
+public class AdminProductController {
+    private final ProductService productService;
 
     public record TempResponseDto<T>(
             String resultCode,
@@ -27,13 +27,13 @@ public class AdminCoffeeController {
     ) {
     }
 
-    // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ CoffeeRequestDto.*;
+    // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ ProductRequestDto.*;
     @PostMapping
-    private ResponseEntity<TempResponseDto<CoffeeResponseDto>> create(
-            @RequestBody @Valid CreateCoffeeRequest requestDto
+    private ResponseEntity<TempResponseDto<ProductResponseDto>> create(
+            @RequestBody @Valid CreateProductRequest requestDto
     ) {
         //이렇게 쓰는것도 좋은데 예를 들어서 필드 7~8개되면 어떻게 될까용??
-        final Coffee coffee = coffeeService.create(
+        final Product product = productService.create(
                 requestDto.name(),
                 requestDto.price(),
                 requestDto.stock(),
@@ -43,14 +43,14 @@ public class AdminCoffeeController {
                 new TempResponseDto<>(
                         "201-1",
                         "상품이 추가되었습니다",
-                        CoffeeResponseDto.from(coffee)
+                        ProductResponseDto.from(product)
                 ),
                 CREATED
         );
     }
     @GetMapping
-    public ResponseEntity<ResponseDto<List<CoffeeResponseDto>>> getCoffees() {
-        List<CoffeeResponseDto> coffees = coffeeService.getCoffees();
-        return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", coffees));
+    public ResponseEntity<ResponseDto<List<ProductResponseDto>>> getProducts() {
+        List<ProductResponseDto> products = productService.getProducts();
+        return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", products));
     }
 }

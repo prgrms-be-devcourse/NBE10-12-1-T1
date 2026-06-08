@@ -1,4 +1,4 @@
-package com.back.domain.delivery.delivery.service;
+package com.back.domain.delivery.service;
 
 import org.springframework.stereotype.Service;
 

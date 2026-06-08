@@ -1,4 +1,4 @@
-package com.back.domain.coffee.coffee.entity;
+package com.back.domain.product.entity;
 
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coffee extends BaseEntity {
+public class Product extends BaseEntity {
     @Column(nullable = false)
     private String name;
 

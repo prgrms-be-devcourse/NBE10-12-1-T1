@@ -1,12 +1,8 @@
 package com.back.domain.order.order.dto;
 
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
 import com.back.domain.order.order.entity.Order;
-import com.back.domain.orderItem.orderItem.entity.OrderItem;
-
+import com.back.domain.order.orderItem.entity.OrderItem;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +22,7 @@ public record OrderResponseDto(Long id,
 
         for(OrderItem orderItem : order.getOrderItems()) {
             items.add(new OrderItemResponseDto(
-                    orderItem.getCoffee().getName(),
+                    orderItem.getProduct().getName(),
                     orderItem.getAmount(),
                     orderItem.getPrice()
             ));
@@ -35,7 +31,7 @@ public record OrderResponseDto(Long id,
 
         // 혹시 long으로 강제cast를 하신 이유가 있을까요??
         return new OrderResponseDto(
-                (long) order.getId(),
+                order.getId(),
                 order.getEmail(),
                 order.getAddress(),
                 items,
@@ -44,5 +40,4 @@ public record OrderResponseDto(Long id,
         );
     }
 }
-
 
