@@ -47,4 +47,14 @@ public class ProductService {
         // Controller로 넘기는게 더 안전하다고하네용?? 허헣 덕분에 배워갑니다.
         return productRepository.save(product);
     }
+    @Transactional
+    public Product update(Long id, String name, Integer price, Integer stock, String imgUrl) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
+        product.update(name, price, stock, imgUrl);
+        return product;
+
+
+    }
+
 }
