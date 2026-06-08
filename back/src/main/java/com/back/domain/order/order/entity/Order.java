@@ -2,6 +2,7 @@ package com.back.domain.order.order.entity;
 
 import com.back.domain.order.orderItem.entity.OrderItem;
 import com.back.global.jpa.entity.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -22,6 +23,21 @@ public class Order extends BaseEntity {
     private String email;
     private String address;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+    }
+
+    public static Order create (String email, String address) {
+        Order order = new Order();
+        order.email = email;
+        order.address = address;
+        return order;
+    }
 }
