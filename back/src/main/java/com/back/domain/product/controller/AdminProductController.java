@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RestController
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
-@Tag(name = "AdminProductController", description = "관리자 상품 컨트롤러")
+@Tag(name = "관리자 상품 관리", description = "신규 상품 추가 및 상품 목록 조회")
 public class AdminProductController {
     private final ProductService productService;
 
