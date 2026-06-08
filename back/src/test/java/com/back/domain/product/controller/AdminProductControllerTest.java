@@ -1,5 +1,7 @@
 package com.back.domain.product.controller;
 
+import com.back.domain.product.dto.ProductRequestDto;
+import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -23,14 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 public class AdminProductControllerTest {
-    private final MockMvc mockMvc;
-    private final ProductService productService;
-
     @Autowired
-    public AdminProductControllerTest(MockMvc mockMvc, ProductService productService) {
-        this.mockMvc = mockMvc;
-        this.productService = productService;
-    }
+    private  MockMvc mockMvc;
+    @Autowired
+    private  ProductService productService;
 
     @Test
     @DisplayName("POST /admin/products")
@@ -64,11 +61,12 @@ public class AdminProductControllerTest {
                 .andExpect(jsonPath("$.data.imgUrl").value("product1.jpg"))
         ;
     }
+
     @Test
     @DisplayName("GET /admin/products - 상품 목록 조회 성공")
     void getProducts() throws Exception {
-            productService.create("상품 1", 30000, 200, "product1.jpg");
-            productService.create("상품 2", 8923, 400, "product2.jpg");
+        productService.create("상품 1", 30000, 200, "product1.jpg");
+        productService.create("상품 2", 8923, 400, "product2.jpg");
 
         mockMvc.perform(get("/admin/products"))
                 .andExpect(status().isOk())
@@ -88,4 +86,26 @@ public class AdminProductControllerTest {
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(0));
     }
+
+    @Test
+    @DisplayName("PATCH /admin/product/{id} - 상품 수정")
+    void updateProduct() throws Exception {
+        final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
+
+        mockMvc.perform(patch("/admin/products/" + product.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "name" : "더 맛있는 커피",
+                                    "price" : 20000,
+                                    "stock" : 10,
+                                    "imgUrl" : "coffee.jpg"
+                                    }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-2"))
+                .andExpect(jsonPath("$.data.name").value("더 맛있는 커피"));
+    }
 }
+
+
