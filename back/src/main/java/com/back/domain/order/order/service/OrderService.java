@@ -44,10 +44,19 @@ public class OrderService {
                                 .orElseThrow(NoSuchElementException::new))
                 .collect(Collectors.toMap(Product::getId, p -> p));
 
-        requestDto.orderItems().stream().map(item -> {
-            OrderItem.create(productMap.get(item.productId()).getPrice(), item.amount());
-        })
+        List<OrderItem> orderItems = requestDto.orderItems().stream().map(item ->
+        {
+            OrderItem orderItem = OrderItem.create(
+                    productMap.get(item.productId()).getPrice(),
+                    item.amount()
+            );
+            orderItem.assignProduct(productMap.get(item.productId()));
+            return orderItem;
+        }).toList();
 
+        Order order = Order.create(requestDto.email(), requestDto.address(), orderItems);
+        orderRepository.save(order);
+        return OrderResponseDto.from(order);
     }
 
     public void login(AdminLoginRequestDto requestDto) {

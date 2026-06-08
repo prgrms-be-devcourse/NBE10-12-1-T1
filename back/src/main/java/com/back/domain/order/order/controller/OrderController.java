@@ -1,6 +1,7 @@
 package com.back.domain.order.order.controller;
 
 import com.back.domain.order.order.dto.AdminLoginRequestDto;
+import com.back.domain.order.order.dto.OrderRequestDto.*;
 import com.back.domain.order.order.dto.OrderResponseDto;
 import com.back.domain.order.order.service.OrderService;
 import com.back.global.dto.ResponseDto;
@@ -27,7 +28,13 @@ public class OrderController {
         return ResponseEntity.ok(new ResponseDto<>("200-1", "주문 목록 조회 완료", orders));
     }
 
-    // [임시] 프론트엔드에서 하드코딩된 값으로 로그인 모방 → 실제 로그인 API 미사용
+    @PostMapping("/orders")
+    @Operation(summary = "주문 생성")
+    public ResponseEntity<ResponseDto<OrderResponseDto>> createOrder(@RequestBody CreateOrderRequest requestDto) {
+        OrderResponseDto response = orderService.createOrder(requestDto);
+        return ResponseEntity.ok(new ResponseDto<>("200-1", "주문 생성 되었습니다.", response));
+    }
+
     @PostMapping("/login")
     @Operation(summary = "관리자 로그인")
     public ResponseEntity<ResponseDto<Void>> login(@RequestBody AdminLoginRequestDto requestDto) {

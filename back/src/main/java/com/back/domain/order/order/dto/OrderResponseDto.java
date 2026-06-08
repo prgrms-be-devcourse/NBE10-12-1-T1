@@ -30,7 +30,6 @@ public record OrderResponseDto(Long id,
             totalPrice += orderItem.getPrice() * orderItem.getAmount();
         }
 
-        // 혹시 long으로 강제cast를 하신 이유가 있을까요??
         return new OrderResponseDto(
                 order.getId(),
                 order.getEmail(),

@@ -15,6 +15,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -44,11 +47,13 @@ class OrderControllerTest {
                 new Product("맛있는 원두", 2000, 10, "image.com")
         );
 
-        Order order = Order.create("input@naver.com", "서울 OO구");
-        OrderItem orderItem = OrderItem.create(order, product, 10, 2000);
+        List<OrderItem> orderItems = new ArrayList<>();
+        OrderItem orderItem = OrderItem.create(2000, 10);
+        orderItem.assignProduct(product);
+        orderItems.add(orderItem);
 
+        Order order = Order.create("input@naver.com", "서울 OO구", orderItems);
         orderRepository.save(order);
-        order.addOrderItem(orderItem);
 
         mockMvc.perform(get("/admin/orders"))
                 .andExpect(status().isOk())
