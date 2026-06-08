@@ -1,9 +1,9 @@
 package com.back.domain.order.order.controller;
 
-import com.back.domain.coffee.entity.Coffee;
 import com.back.domain.order.order.entity.Order;
+import com.back.domain.order.orderItem.entity.OrderItem;
 import com.back.domain.order.order.repository.OrderRepository;
-import com.back.domain.order.entity.OrderItem;
+import com.back.domain.product.entity.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,20 +40,20 @@ class OrderControllerTest {
         Order order = mock(Order.class);
         OrderItem firstItem = mock(OrderItem.class);
         OrderItem secondItem = mock(OrderItem.class);
-        Coffee firstCoffee = mock(Coffee.class);
-        Coffee secondCoffee = mock(Coffee.class);
+        Product firstProduct = mock(Product.class);
+        Product secondProduct = mock(Product.class);
 
-        when(firstItem.getCoffee()).thenReturn(firstCoffee);
-        when(firstCoffee.getName()).thenReturn("맛있는 원두");
+        when(firstItem.getProduct()).thenReturn(firstProduct);
+        when(firstProduct.getName()).thenReturn("맛있는 원두");
         when(firstItem.getAmount()).thenReturn(10);
         when(firstItem.getPrice()).thenReturn(2000);
 
-        when(secondItem.getCoffee()).thenReturn(secondCoffee);
-        when(secondCoffee.getName()).thenReturn("더 맛있는 원두");
+        when(secondItem.getProduct()).thenReturn(secondProduct);
+        when(secondProduct.getName()).thenReturn("더 맛있는 원두");
         when(secondItem.getAmount()).thenReturn(15);
         when(secondItem.getPrice()).thenReturn(3000);
 
-        when(order.getId()).thenReturn(1);
+        when(order.getId()).thenReturn(1L);
         when(order.getEmail()).thenReturn("input@naver.com");
         when(order.getAddress()).thenReturn("서울 OO구 OO로");
         when(order.getCreatedAt()).thenReturn(
@@ -65,7 +65,7 @@ class OrderControllerTest {
         mockMvc.perform(get("/admin/orders"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("200"))
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("주문 목록 조회 완료"))
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].id").value(1))

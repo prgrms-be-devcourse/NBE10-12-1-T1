@@ -1,13 +1,13 @@
-package com.back.domain.coffee.dto;
+package com.back.domain.product.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class CoffeeRequestDto {
-    public record CreateCoffeeRequest(
-            @NotBlank(message = "커피 이름은 필수입니다")
+public class ProductRequestDto {
+    public record CreateProductRequest(
+            @NotBlank(message = "상품 이름은 필수입니다")
             String name,
             @NotNull(message = "가격은 필수입니다")
             Integer price,
@@ -18,7 +18,7 @@ public class CoffeeRequestDto {
     ) {
     }
 
-    public record PatchCoffeeRequest(
+    public record PatchProductRequest(
             // NotBlank : null, "", " " 불가
             // 해당 패턴 : "", " " 불가 (패치로 처리를 하다보니 null은 들어올 수 있어야함)
             @Pattern(regexp = ".*\\S.*", message = "이름을 빈칸으로 수정할 수 없습니다.")
@@ -30,4 +30,3 @@ public class CoffeeRequestDto {
             String imgUrl
     ) {}
 }
-
