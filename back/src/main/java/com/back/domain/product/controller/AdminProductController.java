@@ -52,6 +52,21 @@ public class AdminProductController {
         List<ProductResponseDto> products = productService.getProducts();
         return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", products));
     }
+    @PatchMapping("/{id}")
+    private ResponseEntity<ResponseDto<ProductResponseDto>> update(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid PatchProductRequest requestDto
+    ) {
+        final Product product = productService.update(
+                id,
+                requestDto.name(),
+                requestDto.price(),
+                requestDto.stock(),
+                requestDto.imgUrl()
+        );
+        return ResponseEntity.ok(new ResponseDto<>("200-2", "상품 정보가 수정되었습니다.", ProductResponseDto.from(product)));
+
+    }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "관리자 상품 제거")
