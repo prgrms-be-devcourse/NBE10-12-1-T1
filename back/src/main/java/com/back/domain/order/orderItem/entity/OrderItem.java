@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "OrderItem")
 @Getter
 @NoArgsConstructor
 public class OrderItem extends BaseEntity {
