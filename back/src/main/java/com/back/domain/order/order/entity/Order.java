@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+// entity 이름을 변경해야 할 듯 합니다
+// order는 SQL 예약어라 에러 발생하여 Table 생성이 안된다고 합니다
+
 @Entity
 @Table(name = "Order")
 @Getter

@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+//@Transactional 이건 어떠실까용?? CoffeeService에 있는 내용과 동일합니당
 public class OrderService {
     private final OrderRepository orderRepository;
 

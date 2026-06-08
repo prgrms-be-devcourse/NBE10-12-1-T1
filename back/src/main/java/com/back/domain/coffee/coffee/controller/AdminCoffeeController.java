@@ -1,6 +1,6 @@
 package com.back.domain.coffee.coffee.controller;
 
-import com.back.domain.coffee.coffee.dto.CoffeeRequestDto;
+import com.back.domain.coffee.coffee.dto.CoffeeRequestDto.*;
 import com.back.domain.coffee.coffee.dto.CoffeeResponseDto;
 import com.back.domain.coffee.coffee.entity.Coffee;
 import com.back.domain.coffee.coffee.service.CoffeeService;
@@ -27,10 +27,12 @@ public class AdminCoffeeController {
     ) {
     }
 
+    // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ CoffeeRequestDto.*;
     @PostMapping
     private ResponseEntity<TempResponseDto<CoffeeResponseDto>> create(
-            @RequestBody @Valid CoffeeRequestDto.CreateCoffeeRequest requestDto
+            @RequestBody @Valid CreateCoffeeRequest requestDto
     ) {
+        //이렇게 쓰는것도 좋은데 예를 들어서 필드 7~8개되면 어떻게 될까용??
         final Coffee coffee = coffeeService.create(
                 requestDto.name(),
                 requestDto.price(),

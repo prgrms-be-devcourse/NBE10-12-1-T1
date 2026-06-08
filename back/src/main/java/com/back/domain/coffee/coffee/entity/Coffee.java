@@ -21,6 +21,6 @@ public class Coffee extends BaseEntity {
     @Column(nullable = false)
     private int stock;
 
-    @Column(nullable = false)
+    @Column(nullable = false) // 이거 null이면 안될까용?
     private String imgUrl;
 }
