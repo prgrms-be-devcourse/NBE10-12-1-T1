@@ -1,8 +1,8 @@
-package com.back.domain.order.order.service;
+package com.back.domain.order.service;
 
-import com.back.domain.order.order.dto.AdminLoginRequestDto;
-import com.back.domain.order.order.dto.OrderResponseDto;
-import com.back.domain.order.order.repository.OrderRepository;
+import com.back.domain.order.dto.AdminLoginRequestDto;
+import com.back.domain.order.dto.OrderResponseDto;
+import com.back.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

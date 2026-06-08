@@ -1,8 +1,8 @@
-package com.back.domain.order.order.dto;
+package com.back.domain.order.dto;
 
 
-import com.back.domain.order.order.entity.Order;
-import com.back.domain.orderItem.orderItem.entity.OrderItem;
+import com.back.domain.order.entity.Order;
+import com.back.domain.order.entity.OrderItem;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

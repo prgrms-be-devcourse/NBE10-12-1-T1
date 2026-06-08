@@ -1,4 +1,4 @@
-package com.back.domain.coffee.coffee.dto;
+package com.back.domain.coffee.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package com.back.domain.coffee.coffee.entity;
+package com.back.domain.coffee.entity;
 
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Column;

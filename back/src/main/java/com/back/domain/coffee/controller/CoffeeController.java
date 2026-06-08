@@ -1,7 +1,7 @@
-package com.back.domain.coffee.coffee.controller;
+package com.back.domain.coffee.controller;
 
-import com.back.domain.coffee.coffee.dto.CoffeeResponseDto;
-import com.back.domain.coffee.coffee.service.CoffeeService;
+import com.back.domain.coffee.dto.CoffeeResponseDto;
+import com.back.domain.coffee.service.CoffeeService;
 import com.back.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

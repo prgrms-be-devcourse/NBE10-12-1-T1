@@ -1,6 +1,6 @@
-package com.back.domain.coffee.coffee.dto;
+package com.back.domain.coffee.dto;
 
-import com.back.domain.coffee.coffee.entity.Coffee;
+import com.back.domain.coffee.entity.Coffee;
 import jakarta.validation.constraints.NotNull;
 
 public record CoffeeResponseDto (
