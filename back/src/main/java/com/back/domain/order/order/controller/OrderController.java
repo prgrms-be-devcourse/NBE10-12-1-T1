@@ -23,7 +23,7 @@ public class OrderController {
 
         return ResponseEntity.ok(
                 new ResponseDto<>(
-                        200,
+                        "200",
                         "주문 목록 조회 완료",
                         orders
                 )

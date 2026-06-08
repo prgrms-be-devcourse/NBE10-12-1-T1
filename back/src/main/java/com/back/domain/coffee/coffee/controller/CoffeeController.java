@@ -21,6 +21,6 @@ public class CoffeeController {
     @GetMapping
     public ResponseEntity<ResponseDto<List<CoffeeResponseDto>>> getCoffees() {
         List<CoffeeResponseDto> coffees = coffeeService.getCoffees();
-        return ResponseEntity.ok(new ResponseDto<>(200, "상품 목록 조회 성공", coffees));
+        return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", coffees));
     }
 }
