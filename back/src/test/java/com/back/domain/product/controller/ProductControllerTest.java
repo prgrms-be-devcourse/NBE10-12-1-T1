@@ -1,7 +1,5 @@
 package com.back.domain.product.controller;
 
-
-import com.back.domain.order.order.repository.OrderRepository;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,14 +12,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(ProductController.class)
 public class ProductControllerTest {
     private final MockMvc mockMvc;
     private final ProductRepository productRepository;
 
     @Autowired
-    public ProductControllerTest(MockMvc mockMvc, OrderRepository orderRepository, ProductRepository productRepository) {
+    public ProductControllerTest(MockMvc mockMvc, ProductRepository productRepository) {
         this.mockMvc = mockMvc;
         this.productRepository = productRepository;
     }
