@@ -4,6 +4,7 @@ import com.back.domain.order.dto.AdminLoginRequestDto;
 import com.back.domain.order.dto.OrderRequestDto.*;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.service.OrderService;
+import com.back.global.annotation.ApiV1;
 import com.back.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@ApiV1
 @RestController
 @RequestMapping("")
 @RequiredArgsConstructor
