@@ -123,7 +123,7 @@ public class AdminProductControllerTest {
     }
 
     @Test
-    @DisplayName("[베스트 케이스 테스트 코드 작성] 관리자 상품 삭제(소프트 삭제) 성공")
+    @DisplayName("관리자 상품 삭제(소프트 삭제) 성공")
     void deleteProducts() throws Exception {
         Product product1 = productService.create("상품 1", 30000, 200, "product1.jpg");
 
