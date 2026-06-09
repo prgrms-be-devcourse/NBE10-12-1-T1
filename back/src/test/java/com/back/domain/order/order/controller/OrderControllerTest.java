@@ -1,8 +1,8 @@
 package com.back.domain.order.order.controller;
 
-import com.back.domain.order.order.entity.Order;
-import com.back.domain.order.order.repository.OrderRepository;
-import com.back.domain.order.orderItem.entity.OrderItem;
+import com.back.domain.order.entity.Order;
+import com.back.domain.order.repository.OrderRepository;
+import com.back.domain.order.entity.OrderItem;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;

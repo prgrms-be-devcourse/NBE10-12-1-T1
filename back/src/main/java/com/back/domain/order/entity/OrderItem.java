@@ -1,7 +1,5 @@
-package com.back.domain.order.orderItem.entity;
+package com.back.domain.order.entity;
 
-import com.back.domain.order.order.entity.Order;
-import com.back.domain.product.entity.Product;
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
