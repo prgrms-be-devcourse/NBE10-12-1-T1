@@ -19,8 +19,9 @@ public class OrderItem extends BaseEntity {
     private int price;
     private int amount;
 
-    public static OrderItem create(String name, int price, int amount) {
+    public static OrderItem create(Long productId,String name, int price, int amount) {
         OrderItem orderItem = new OrderItem();
+        orderItem.productId = productId;
         orderItem.name = name;
         orderItem.price = price;
         orderItem.amount = amount;
