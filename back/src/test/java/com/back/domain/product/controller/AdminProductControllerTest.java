@@ -89,7 +89,7 @@ public class AdminProductControllerTest {
     }
 
     @Test
-    @DisplayName("상품 수정 성공")
+    @DisplayName("관리자 상품 수정 성공")
     void updateProduct() throws Exception {
         final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
 
