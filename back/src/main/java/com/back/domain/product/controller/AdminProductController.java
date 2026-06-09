@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/admin/products")
@@ -24,17 +24,10 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class AdminProductController {
     private final ProductService productService;
 
-    public record TempResponseDto<T>(
-            String resultCode,
-            String message,
-            T data
-    ) {
-    }
-
     // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ ProductRequestDto.*;
     @PostMapping
     @Operation(summary = "관리자 상품 추가")
-    private ResponseEntity<TempResponseDto<ProductResponseDto>> create(
+    private ResponseEntity<ResponseDto<ProductResponseDto>> create(
             @RequestBody @Valid CreateProductRequest requestDto
     ) {
         //이렇게 쓰는것도 좋은데 예를 들어서 필드 7~8개되면 어떻게 될까용??
@@ -45,7 +38,7 @@ public class AdminProductController {
                 requestDto.imgUrl()
         );
         return new ResponseEntity<>(
-                new TempResponseDto<>(
+                new ResponseDto<>(
                         "201-1",
                         "상품이 추가되었습니다",
                         ProductResponseDto.from(product)
@@ -53,12 +46,14 @@ public class AdminProductController {
                 CREATED
         );
     }
+
     @GetMapping
     @Operation(summary = "관리자 상품 목록 조회")
     public ResponseEntity<ResponseDto<List<ProductResponseDto>>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
         return ResponseEntity.ok(new ResponseDto<>("200", "상품 목록 조회 성공", products));
     }
+
     @PatchMapping("/{id}")
     private ResponseEntity<ResponseDto<ProductResponseDto>> update(
             @PathVariable("id") Long id,
@@ -73,5 +68,22 @@ public class AdminProductController {
         );
         return ResponseEntity.ok(new ResponseDto<>("200-2", "상품 정보가 수정되었습니다.", ProductResponseDto.from(product)));
 
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "관리자 상품 제거")
+    public ResponseEntity<ResponseDto<Void>> delete(@PathVariable Long id) {
+        Product product = productService.findById(id).get();
+
+        productService.delete(product);
+
+        return new ResponseEntity<>(
+                new ResponseDto<>(
+                        "200-1",
+                        "상품이 삭제되었습니다",
+                        null
+                ),
+                OK
+        );
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -150,6 +151,20 @@ public class AdminProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-2"))
                 .andExpect(jsonPath("$.data.imgUrl").value("coffee2.jpg"));
+    }
+
+    @Test
+    @DisplayName("DELETE /admin/products/{id} - 관리자 상품 삭제")
+    void deleteProducts() throws Exception {
+        Product product1 = productService.create("상품 1", 30000, 200, "product1.jpg");
+
+        mockMvc.perform(delete("/admin/products/{id}", product1.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("상품이 삭제되었습니다"))
+                .andExpect(jsonPath("$.data").doesNotExist());
+
+        assertThat(productService.findById(product1.getId())).isEmpty();
     }
 }
 
