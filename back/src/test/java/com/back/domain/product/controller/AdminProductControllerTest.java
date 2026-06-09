@@ -1,7 +1,5 @@
 package com.back.domain.product.controller;
 
-import com.back.domain.product.dto.ProductRequestDto;
-import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
 import org.junit.jupiter.api.Assertions;
@@ -16,10 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -134,7 +132,7 @@ public class AdminProductControllerTest {
                 .andExpect(jsonPath("$.data").doesNotExist());
 
         Product product = productService.findById(product1.getId()).get();
-        Assertions.assertNotNull(product.getDeleteAt());
+        Assertions.assertNotNull(product.getDeletedAt());
     }
 }
 
