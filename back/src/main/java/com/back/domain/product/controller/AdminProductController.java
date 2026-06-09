@@ -23,13 +23,11 @@ import java.util.List;
 public class AdminProductController {
     private final ProductService productService;
 
-    // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ ProductRequestDto.*;
     @PostMapping
     @Operation(summary = "관리자 상품 추가")
     public ResponseDto<ProductResponseDto> create(
             @RequestBody @Valid CreateProductRequest requestDto
     ) {
-        //이렇게 쓰는것도 좋은데 예를 들어서 필드 7~8개되면 어떻게 될까용??
         final Product product = productService.create(
                 requestDto.name(),
                 requestDto.price(),
@@ -69,9 +67,7 @@ public class AdminProductController {
     @DeleteMapping("/{id}")
     @Operation(summary = "관리자 상품 제거")
     public ResponseDto<Void> delete(@PathVariable Long id) {
-        Product product = productService.findById(id).get();
-
-        productService.delete(product);
+        productService.delete(id);
 
         return new ResponseDto<>(
                         "200-1",
