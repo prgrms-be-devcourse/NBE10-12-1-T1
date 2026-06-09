@@ -10,12 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.http.HttpStatus.*;
 
 @ApiV1
 @RestController
@@ -41,7 +38,7 @@ public class AdminProductController {
         );
         return new ResponseDto<>(
                         "201-1",
-                        "상품이 추가되었습니다",
+                        "상품 생성 성공",
                         ProductResponseDto.from(product)
         );
     }
@@ -65,7 +62,7 @@ public class AdminProductController {
                 requestDto.stock(),
                 requestDto.imgUrl()
         );
-        return new ResponseDto<>("200-2", "상품 정보가 수정되었습니다.", ProductResponseDto.from(product));
+        return new ResponseDto<>("200-1", "상품 수정 성공", ProductResponseDto.from(product));
 
     }
 
