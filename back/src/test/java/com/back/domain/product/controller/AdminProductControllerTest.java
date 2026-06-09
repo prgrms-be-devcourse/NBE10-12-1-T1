@@ -34,7 +34,7 @@ public class AdminProductControllerTest {
     void t1() throws Exception {
         final ResultActions resultActions = mockMvc
                 .perform(
-                        post("api/v1/admin/products")
+                        post("/api/v1/admin/products")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
