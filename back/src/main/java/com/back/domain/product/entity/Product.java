@@ -41,9 +41,11 @@ public class Product extends BaseEntity {
         if (stock != null) this.stock = stock;
         if (imgUrl != null) this.imgUrl = imgUrl;
     }
+
     public void delete() {
         this.deletedAt = LocalDateTime.now();
     }
+
     public boolean isDeleted() {
         return this.deletedAt != null;
     }
