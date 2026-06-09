@@ -41,7 +41,7 @@ public class AdminProductController {
         );
         return new ResponseDto<>(
                         "201-1",
-                        "상품이 추가되었습니다",
+                        "상품 생성 성공",
                         ProductResponseDto.from(product)
         );
     }
