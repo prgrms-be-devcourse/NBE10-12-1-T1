@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -21,6 +23,9 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private int stock;
 
+    @Column
+    private LocalDateTime dletedAt;
+
     private String imgUrl;
 
     public void update(String name, Integer price, Integer stock, String imgUrl) {
@@ -28,6 +33,12 @@ public class Product extends BaseEntity {
         if (price != null) this.price = price;
         if (stock != null) this.stock = stock;
         if (imgUrl != null) this.imgUrl = imgUrl;
+    }
+    public void delete() {
+        this.dletedAt = LocalDateTime.now();
+    }
+    public boolean isDeleted() {
+        return this.dletedAt != null;
     }
 
     public void decreaseStock(Integer stock) {
