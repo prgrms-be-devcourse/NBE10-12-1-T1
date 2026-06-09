@@ -24,12 +24,21 @@ export default function LoginModal({ onClose, onLogin }: Props) {
   const [password, setPassword] = useState('admin');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (id === 'admin' && password === 'admin') {
-      onLogin(true);
-    } else {
-      setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+    try {
+      const res = await fetch('http://localhost:8080/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, password }),
+      });
+      if (res.ok) {
+        onLogin(true);
+      } else {
+        setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+      }
+    } catch {
+      setError('서버에 연결할 수 없습니다.');
     }
   };
 
