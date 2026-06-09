@@ -88,7 +88,7 @@ public class AdminProductControllerTest {
     }
 
     @Test
-    @DisplayName("상품이 없으면 빈 배열 반환")
+    @DisplayName("상품 목록 조회 성공 - 빈 배열 반환")
     void t3() throws Exception {
 
         mockMvc.perform(get("api/v1/admin/products"))
