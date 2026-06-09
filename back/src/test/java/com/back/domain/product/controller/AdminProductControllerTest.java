@@ -4,6 +4,7 @@ import com.back.domain.product.dto.ProductRequestDto;
 import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,8 +118,23 @@ public class AdminProductControllerTest {
                 .andExpect(jsonPath("$.data.name").value("더 맛있는 커피"))
                 .andExpect(jsonPath("$.data.price").value(25000))
                 .andExpect(jsonPath("$.data.stock").value(100))
-                .andExpect(jsonPath("$.data.imgUrl").value("coffee2.jpg"))
-        ;
+                .andExpect(jsonPath("$.data.imgUrl").value("coffee2.jpg"));
+
+    }
+
+    @Test
+    @DisplayName("관리자 상품 삭제(소프트 삭제) 성공")
+    void deleteProducts() throws Exception {
+        Product product1 = productService.create("상품 1", 30000, 200, "product1.jpg");
+
+        mockMvc.perform(delete("api/v1/admin/products/{id}", product1.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("상품이 삭제되었습니다"))
+                .andExpect(jsonPath("$.data").doesNotExist());
+
+        Product product = productService.findById(product1.getId()).get();
+        Assertions.assertNotNull(product.getDeleteAt());
     }
 }
 
