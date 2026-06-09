@@ -39,7 +39,7 @@ public class ProductService {
             int stock,
             String imgUrl
     ) {
-        final Product product = new Product(name, price, stock, imgUrl);
+        final Product product = new Product(name, price, stock, null,imgUrl);
         // 흐음~ entity를 바로 넘기는건 위험하다고 하네요
         // 저희 수업시간에 post & comment처럼 서로 참조하는 상황일 때
         // 화면에 계속 연쇄적으로 붙어서 출력된 거 기억하실까요? 그런 문제가 발생 할 수 도있고

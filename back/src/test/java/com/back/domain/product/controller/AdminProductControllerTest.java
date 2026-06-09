@@ -105,9 +105,9 @@ public class AdminProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                    "name" : "더 맛있는 커피"
-                                    "price" : 25000
-                                    "stock" : 100
+                                    "name" : "더 맛있는 커피",
+                                    "price" : 25000,
+                                    "stock" : 100,
                                     "imgUrl" : "coffee2.jpg"
                                     }
                                 """))

@@ -17,7 +17,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/admin/products")
+@RequestMapping("api/v1/admin/products")
 @RequiredArgsConstructor
 @Tag(name = "관리자 상품 관리", description = "신규 상품 추가 및 상품 목록 조회")
 
@@ -63,7 +63,7 @@ public class AdminProductController {
                 requestDto.stock(),
                 requestDto.imgUrl()
         );
-        return new ResponseDto<>("200-2", "상품 정보가 수정되었습니다.", ProductResponseDto.from(product));
+        return new ResponseDto<>("200-1", "상품 수정 성공", ProductResponseDto.from(product));
 
     }
 
