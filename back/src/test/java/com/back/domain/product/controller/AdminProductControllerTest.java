@@ -64,7 +64,7 @@ public class AdminProductControllerTest {
     }
 
     @Test
-    @DisplayName("GET /admin/products - 상품 목록 조회 성공")
+    @DisplayName("관리자 상품 목록 조회 성공")
     void t2() throws Exception {
         productService.create("맛있는 원두", 30000, 200, "coffee1.jpg");
         productService.create("더 맛있는 원두", 45000, 400, "coffee2.jpg");
@@ -88,7 +88,7 @@ public class AdminProductControllerTest {
     }
 
     @Test
-    @DisplayName("GET /admin/products - 상품이 없으면 빈 배열 반환")
+    @DisplayName("상품이 없으면 빈 배열 반환")
     void t3() throws Exception {
 
         mockMvc.perform(get("api/v1/admin/products"))
