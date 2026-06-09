@@ -2,6 +2,7 @@ package com.back.domain.product.controller;
 
 import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.service.ProductService;
+import com.back.global.annotation.ApiV1;
 import com.back.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@ApiV1
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
