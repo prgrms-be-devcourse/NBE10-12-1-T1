@@ -42,7 +42,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("관리자 주문 목록 조회")
+    @DisplayName("관리자 주문 목록 조회 성공")
     void getAdminOrdersTest() throws Exception {
         Product product = productRepository.save(
                 new Product("맛있는 원두", 2000, 10, "image.com")
