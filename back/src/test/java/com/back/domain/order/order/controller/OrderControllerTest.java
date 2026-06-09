@@ -42,6 +42,40 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("관리자 주문 아이템 목록 조회 성공")
+    void t1() throws Exception {
+
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        OrderItem orderItem = OrderItem.create(
+                1L,
+                "맛있는 원두",
+                2000,
+                10
+        );
+
+        orderItems.add(orderItem);
+
+        Order order = Order.create(
+                "input@naver.com",
+                "서울 OO구",
+                orderItems
+        );
+
+        orderRepository.save(order);
+
+        mockMvc.perform(get("/admin/orders/{id}/order-items", order.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("주문 아이템 목록 조회 성공"))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].name").value("맛있는 원두"))
+                .andExpect(jsonPath("$.data[0].amount").value(10))
+                .andExpect(jsonPath("$.data[0].price").value(2000));
+    }
+
+    @Test
     @DisplayName("관리자 주문 목록 조회 성공")
     void getAdminOrdersTest() throws Exception {
         Product product = productRepository.save(
