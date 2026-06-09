@@ -72,4 +72,22 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(0));
     }
+
+    @Test
+    @DisplayName("상품 목록 조회 성공 - 소프트 삭제")
+    void t3() throws Exception {
+        Product product = productRepository.save(
+                new Product("맛있는 원두", 30000, 100, "coffee1.jpg")
+        );
+
+        product.delete();
+        productRepository.save(product);
+
+        mockMvc.perform(get("/api/v1/products"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("상품 목록 조회 성공"))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(0));
+    }
 }
