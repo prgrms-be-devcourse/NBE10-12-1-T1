@@ -42,28 +42,29 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /admin/orders")
+    @DisplayName("관리자 주문 목록 조회 성공")
     void getAdminOrdersTest() throws Exception {
         Product product = productRepository.save(
                 new Product("맛있는 원두", 2000, 10, "image.com")
         );
+        Long pid = product.getId();
 
         List<OrderItem> orderItems = new ArrayList<>();
-        OrderItem orderItem = OrderItem.create(2000, 10);
-        orderItem.assignProduct(product);
+        OrderItem orderItem = OrderItem.create(2000, 10, pid);
         orderItems.add(orderItem);
 
         Order order = Order.create("input@naver.com", "서울 OO구", orderItems);
         orderRepository.save(order);
 
-        mockMvc.perform(get("/admin/orders"))
+        mockMvc.perform(get("api/v1/admin/orders"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("관리자 주문 목록 조회 성공"))
                 .andExpect(jsonPath("$.data[0].id").value(order.getId()))
                 .andExpect(jsonPath("$.data[0].email").value("input@naver.com"))
                 .andExpect(jsonPath("$.data[0].address").value("서울 OO구"))
-                .andExpect(jsonPath("$.data[0].orderItems[0].name").value("맛있는 원두"))
-                .andExpect(jsonPath("$.data[0].orderItems[0].amount").value(10))
-                .andExpect(jsonPath("$.data[0].orderItems[0].price").value(2000));
+                .andExpect(jsonPath("$.data[0].status").value("결제 완료"))
+                .andExpect(jsonPath("$.data[0].createdAt").exists());
     }
 
     @Test
