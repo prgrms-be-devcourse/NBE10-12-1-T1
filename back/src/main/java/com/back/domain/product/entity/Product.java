@@ -28,6 +28,13 @@ public class Product extends BaseEntity {
 
     private String imgUrl;
 
+    public Product(String name, int price, int stock, String imgUrl) {
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+        this.imgUrl = imgUrl;
+    }
+
     public void update(String name, Integer price, Integer stock, String imgUrl) {
         if (name != null) this.name = name;
         if (price != null) this.price = price;

@@ -18,12 +18,11 @@ public record OrderResponseDto(Long id,
     public static OrderResponseDto from(Order order) {
         List<OrderItemResponseDto> items = new ArrayList<>();
 
-        //해당 값은 stream 내부에서는 외부값 수정하면 안되는 규약이 있어서 만드신거죠??
         int totalPrice = 0;
 
         for(OrderItem orderItem : order.getOrderItems()) {
             items.add(new OrderItemResponseDto(
-                    orderItem.getProduct().getName(),
+                    orderItem.getName(),
                     orderItem.getAmount(),
                     orderItem.getPrice()
             ));
