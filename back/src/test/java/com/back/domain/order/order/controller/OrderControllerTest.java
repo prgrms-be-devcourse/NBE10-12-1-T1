@@ -84,7 +84,8 @@ class OrderControllerTest {
         Long pid = product.getId();
 
         List<OrderItem> orderItems = new ArrayList<>();
-        OrderItem orderItem = OrderItem.create(2000, 10, pid);
+        //변경해야 테스트 구동 가능 추후 구현 시 다시 되돌려야 할까요?
+        OrderItem orderItem = OrderItem.create(pid, product.getName(), product.getPrice(), 10);
         orderItems.add(orderItem);
 
         Order order = Order.create("input@naver.com", "서울 OO구", orderItems);

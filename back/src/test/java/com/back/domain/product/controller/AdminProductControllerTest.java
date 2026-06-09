@@ -1,7 +1,5 @@
 package com.back.domain.product.controller;
 
-import com.back.domain.product.dto.ProductRequestDto;
-import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
 import org.junit.jupiter.api.Assertions;
@@ -16,10 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -68,7 +66,7 @@ public class AdminProductControllerTest {
         productService.create("맛있는 원두", 30000, 200, "coffee1.jpg");
         productService.create("더 맛있는 원두", 45000, 400, "coffee2.jpg");
 
-        mockMvc.perform(get("api/v1/admin/products"))
+        mockMvc.perform(get("/api/v1/admin/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200"))
                 .andExpect(jsonPath("$.data").isArray())
@@ -90,7 +88,7 @@ public class AdminProductControllerTest {
     @DisplayName("관리자 상품 목록 조회 성공 - 빈 배열 반환")
     void t3() throws Exception {
 
-        mockMvc.perform(get("api/v1/admin/products"))
+        mockMvc.perform(get("/api/v1/admin/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(0));
@@ -101,7 +99,7 @@ public class AdminProductControllerTest {
     void updateProduct() throws Exception {
         final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
 
-        mockMvc.perform(patch("api/v1/admin/products/" + product.getId())
+        mockMvc.perform(patch("/api/v1/admin/products/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -134,7 +132,7 @@ public class AdminProductControllerTest {
                 .andExpect(jsonPath("$.data").doesNotExist());
 
         Product product = productService.findById(product1.getId()).get();
-        Assertions.assertNotNull(product.getDeleteAt());
+        Assertions.assertNotNull(product.getDeletedAt());
     }
 }
 

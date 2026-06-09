@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-//@Transactional 이건 어떠실까용?? ProductService에 있는 내용과 동일합니당
+@Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -29,7 +29,6 @@ public class OrderService {
     private static final String ADMIN_ID = "admin";
     private static final String ADMIN_PW = "admin";
 
-    @Transactional
     public List<OrderResponseDto> adminOrderList() {
         return orderRepository.findAll()
                 .stream()
@@ -37,7 +36,6 @@ public class OrderService {
                 .toList();
     }
 
-    @Transactional
     public OrderResponseDto createOrder(CreateOrderRequest requestDto) {
         //1. 요청들이 들어온 상품Map 생성 {1 : 1번상품},{2 : 2번상품}
         List<Long> productIds = requestDto.orderItems().stream()
@@ -54,16 +52,16 @@ public class OrderService {
                 {
                     Product product = productMap.get(item.productId());
                     product.decreaseStock(item.amount());
-                    OrderItem orderItem = OrderItem.create(
+
+                    return OrderItem.create(
+                            product.getId(),
+                            product.getName(),
                             product.getPrice(),
                             item.amount()
                     );
-                    orderItem.assignProduct(productMap.get(item.productId()));
-                    return orderItem;
                 })
                 .toList();
 
-        //3. 주문 생성
         Order order = Order.create(requestDto.email(), requestDto.address(), orderItems);
         orderRepository.save(order);
         return OrderResponseDto.from(order);

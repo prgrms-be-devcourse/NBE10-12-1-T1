@@ -4,20 +4,19 @@ import com.back.domain.product.dto.ProductRequestDto.*;
 import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
+import com.back.global.annotation.ApiV1;
 import com.back.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
-
+@ApiV1
 @RestController
-@RequestMapping("api/v1/admin/products")
+@RequestMapping("/admin/products")
 @RequiredArgsConstructor
 @Tag(name = "관리자 상품 관리", description = "신규 상품 추가 및 상품 목록 조회")
 
