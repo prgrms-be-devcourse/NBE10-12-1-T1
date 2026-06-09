@@ -27,7 +27,7 @@ public class AdminProductController {
     // 그 호출이 너무 길어져서 줄여봤습니당 ㅎ ProductRequestDto.*;
     @PostMapping
     @Operation(summary = "관리자 상품 추가")
-    private ResponseDto<ProductResponseDto> create(
+    public ResponseDto<ProductResponseDto> create(
             @RequestBody @Valid CreateProductRequest requestDto
     ) {
         //이렇게 쓰는것도 좋은데 예를 들어서 필드 7~8개되면 어떻게 될까용??
@@ -52,7 +52,7 @@ public class AdminProductController {
     }
 
     @PatchMapping("/{id}")
-    private ResponseDto<ProductResponseDto> update(
+    public ResponseDto<ProductResponseDto> update(
             @PathVariable("id") Long id,
             @RequestBody @Valid PatchProductRequest requestDto
     ) {
