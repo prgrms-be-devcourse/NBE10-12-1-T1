@@ -66,7 +66,7 @@ public class AdminProductControllerTest {
         productService.create("맛있는 원두", 30000, 200, "coffee1.jpg");
         productService.create("더 맛있는 원두", 45000, 400, "coffee2.jpg");
 
-        mockMvc.perform(get("api/v1/admin/products"))
+        mockMvc.perform(get("/api/v1/admin/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200"))
                 .andExpect(jsonPath("$.data").isArray())
@@ -88,7 +88,7 @@ public class AdminProductControllerTest {
     @DisplayName("관리자 상품 목록 조회 성공 - 빈 배열 반환")
     void t3() throws Exception {
 
-        mockMvc.perform(get("api/v1/admin/products"))
+        mockMvc.perform(get("/api/v1/admin/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(0));
@@ -99,13 +99,13 @@ public class AdminProductControllerTest {
     void updateProduct() throws Exception {
         final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
 
-        mockMvc.perform(patch("api/v1/admin/products/" + product.getId())
+        mockMvc.perform(patch("/api/v1/admin/products/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                    "name" : "더 맛있는 커피"
-                                    "price" : 25000
-                                    "stock" : 100
+                                    "name" : "더 맛있는 커피",
+                                    "price" : 25000,
+                                    "stock" : 100,
                                     "imgUrl" : "coffee2.jpg"
                                     }
                                 """))
