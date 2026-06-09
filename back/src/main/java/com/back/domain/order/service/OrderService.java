@@ -52,14 +52,13 @@ public class OrderService {
                 {
                     Product product = productMap.get(item.productId());
                     product.decreaseStock(item.amount());
-                    OrderItem orderItem = OrderItem.create(
+
+                    return OrderItem.create(
                             product.getId(),
                             product.getName(),
                             product.getPrice(),
                             item.amount()
                     );
-
-                    return orderItem;
                 })
                 .toList();
 

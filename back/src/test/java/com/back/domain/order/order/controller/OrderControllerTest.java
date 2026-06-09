@@ -84,7 +84,7 @@ class OrderControllerTest {
         Long pid = product.getId();
 
         List<OrderItem> orderItems = new ArrayList<>();
-        OrderItem orderItem = OrderItem.create(2000, 10, pid);
+        OrderItem orderItem = OrderItem.create(pid, product.getName(), product.getPrice(), 10);
         orderItems.add(orderItem);
 
         Order order = Order.create("input@naver.com", "서울 OO구", orderItems);
