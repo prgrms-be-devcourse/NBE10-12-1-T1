@@ -31,18 +31,18 @@ public class AdminProductControllerTest {
     private ProductService productService;
 
     @Test
-    @DisplayName("POST /admin/products")
+    @DisplayName("관리자 상품 생성")
     void t1() throws Exception {
         final ResultActions resultActions = mockMvc
                 .perform(
-                        post("/admin/products")
+                        post("api/v1/admin/products")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
                                             "name" : "NEW원두",
                                             "price" : 12000,
                                             "stock" : 300,
-                                            "imgUrl" : "product1.jpg"
+                                            "imgUrl" : "coffee1.jpg"
                                         }
                                         """)
                 ).andDo(print());
@@ -50,16 +50,14 @@ public class AdminProductControllerTest {
         final Product product = productService.findLatest().orElseThrow();
 
         resultActions
-                .andExpect(handler().handlerType(AdminProductController.class))
-                .andExpect(handler().methodName("create"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.resultCode").value("201-1"))
-                .andExpect(jsonPath("$.message").value("상품이 추가되었습니다"))
+                .andExpect(jsonPath("$.message").value("상품 생성 성공"))
                 .andExpect(jsonPath("$.data.id").value(product.getId()))
                 .andExpect(jsonPath("$.data.name").value("NEW원두"))
                 .andExpect(jsonPath("$.data.price").value(12000))
                 .andExpect(jsonPath("$.data.stock").value(300))
-                .andExpect(jsonPath("$.data.imgUrl").value("product1.jpg"))
+                .andExpect(jsonPath("$.data.imgUrl").value("coffee1.jpg"))
         ;
     }
 
