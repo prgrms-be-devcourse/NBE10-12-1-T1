@@ -18,13 +18,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ProductController.class)
 public class ProductControllerTest {
     private final MockMvc mockMvc;
-    private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
     @Autowired
     public ProductControllerTest(MockMvc mockMvc, OrderRepository orderRepository, ProductRepository productRepository) {
         this.mockMvc = mockMvc;
-        this.orderRepository = orderRepository;
         this.productRepository = productRepository;
     }
 
