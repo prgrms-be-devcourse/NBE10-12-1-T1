@@ -23,9 +23,9 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "사용자 상품 목록 조회")
-    public ResponseEntity<ResponseDto<List<ProductResponseDto>>> getProducts() {
+    public ResponseDto<List<ProductResponseDto>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
         // ResponseDto 내부에 int status --> String resultCode로 변경에 따른 수정
-        return ResponseEntity.ok(new ResponseDto<>("200-1", "상품 목록 조회 성공", products));
+        return new ResponseDto<>("200-1", "상품 목록 조회 성공", products);
     }
 }

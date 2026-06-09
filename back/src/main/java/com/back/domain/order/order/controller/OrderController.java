@@ -31,16 +31,16 @@ public class OrderController {
 
     @PostMapping("/orders")
     @Operation(summary = "주문 생성")
-    public ResponseEntity<ResponseDto<OrderResponseDto>> createOrder(@RequestBody CreateOrderRequest requestDto) {
+    public ResponseDto<OrderResponseDto> createOrder(@RequestBody CreateOrderRequest requestDto) {
         OrderResponseDto response = orderService.createOrder(requestDto);
-        return new ResponseEntity<>(new ResponseDto<>("201-1", "주문 생성 되었습니다.", response), HttpStatus.CREATED);
+        return new ResponseDto<>("201-1", "주문 생성 되었습니다.", response);
     }
 
     @PostMapping("/admin/login")
     @Operation(summary = "관리자 로그인")
-    public ResponseEntity<ResponseDto<Void>> login(@RequestBody AdminLoginRequestDto requestDto) {
+    public ResponseDto<Void> login(@RequestBody AdminLoginRequestDto requestDto) {
         orderService.login(requestDto);
-        return ResponseEntity.ok(new ResponseDto<>("200-1", "로그인 되었습니다.", null));
+        return new ResponseDto<>("200-1", "로그인 되었습니다.", null);
 
     }
 }
