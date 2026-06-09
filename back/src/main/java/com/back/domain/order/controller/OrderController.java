@@ -1,14 +1,13 @@
-package com.back.domain.order.order.controller;
+package com.back.domain.order.controller;
 
-import com.back.domain.order.order.dto.AdminLoginRequestDto;
-import com.back.domain.order.order.dto.OrderRequestDto.*;
-import com.back.domain.order.order.dto.OrderResponseDto;
-import com.back.domain.order.order.service.OrderService;
+import com.back.domain.order.dto.AdminLoginRequestDto;
+import com.back.domain.order.dto.OrderRequestDto.*;
+import com.back.domain.order.dto.OrderResponseDto;
+import com.back.domain.order.service.OrderService;
 import com.back.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
