@@ -14,14 +14,15 @@ public class OrderItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId")
     private Order order;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productId")
-    private Product product;
+    private Long productId;
+    private String name;
     private int price;
     private int amount;
 
-    public static OrderItem create(int price, int amount) {
+    public static OrderItem create(Long productId,String name, int price, int amount) {
         OrderItem orderItem = new OrderItem();
+        orderItem.productId = productId;
+        orderItem.name = name;
         orderItem.price = price;
         orderItem.amount = amount;
         return orderItem;
@@ -29,10 +30,6 @@ public class OrderItem extends BaseEntity {
 
     public void assignOrder(Order order) {
         this.order = order;
-    }
-
-    public void assignProduct(Product product) {
-        this.product = product;
     }
 
 }

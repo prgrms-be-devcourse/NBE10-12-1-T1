@@ -24,7 +24,7 @@ public class Product extends BaseEntity {
     private int stock;
 
     @Column
-    private LocalDateTime dletedAt;
+    private LocalDateTime deletedAt;
 
     private String imgUrl;
 
@@ -35,10 +35,10 @@ public class Product extends BaseEntity {
         if (imgUrl != null) this.imgUrl = imgUrl;
     }
     public void delete() {
-        this.dletedAt = LocalDateTime.now();
+        this.deletedAt = LocalDateTime.now();
     }
     public boolean isDeleted() {
-        return this.dletedAt != null;
+        return this.deletedAt != null;
     }
 
     public void decreaseStock(Integer stock) {
