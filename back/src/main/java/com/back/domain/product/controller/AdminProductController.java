@@ -4,6 +4,7 @@ import com.back.domain.product.dto.ProductRequestDto.*;
 import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
+import com.back.global.annotation.ApiV1;
 import com.back.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
+@ApiV1
 @RestController
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
