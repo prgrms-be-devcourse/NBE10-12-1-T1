@@ -1,26 +1,34 @@
 package com.back.domain.order.entity;
 
 import com.back.global.jpa.entity.BaseEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// entity 이름을 변경해야 할 듯 합니다
-// order는 SQL 예약어라 에러 발생하여 Table 생성이 안된다고 합니다
+import static jakarta.persistence.EnumType.STRING;
+
+enum OrderStatus {
+    PAYMENT_COMPLETE,
+    PREPARING_PRODUCT,
+    IN_TRANSIT,
+    DELIVERED
+}
 
 @Entity
-@Table(name = "Orders")
+@Table(name = "Orders") // Order는 SQL 예약어라 Table을 생성할 수 없다.
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Order extends BaseEntity {
     private String email;
     private String address;
+    @Enumerated(STRING)
+    private OrderStatus status;
+    private int totalPrice;
 
     @OneToMany(
             mappedBy = "order",
@@ -29,6 +37,7 @@ public class Order extends BaseEntity {
     )
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    // 생성자로 구현하는 건 어떨까요?
     public static Order create(String email, String address, List<OrderItem> orderItemsList) {
         Order order = new Order();
         order.email = email;
