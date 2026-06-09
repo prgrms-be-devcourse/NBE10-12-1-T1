@@ -2,6 +2,7 @@ package com.back.domain.order.job;
 
 import com.back.domain.order.entity.Order;
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.parameters.RunIdIncrementer;
@@ -10,10 +11,10 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.database.JpaCursorItemReader;
 import org.springframework.batch.infrastructure.item.database.JpaItemWriter;
-import org.springframework.batch.infrastructure.item.database.JpaPagingItemReader;
+import org.springframework.batch.infrastructure.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.infrastructure.item.database.builder.JpaItemWriterBuilder;
-import org.springframework.batch.infrastructure.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,37 +22,39 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
 public class OrderBatchConfig {
-
-    private static final int CHUNK_SIZE = 100;
+    private final int CHUNK_SIZE = 100;
 
     // ---------------------------------------------------------
-    // 👉 1. Reader: DB에서 데이터 읽어오기 (JpaPagingItemReader)
+    //  1. Reader: DB에서 데이터 읽어오기 (JpaPagingItemReader)
     // ---------------------------------------------------------
+    @StepScope
     @Bean
-    public JpaPagingItemReader<Order> myReader(EntityManagerFactory entityManagerFactory) {
+    public JpaCursorItemReader<Order> myReader(EntityManagerFactory entityManagerFactory) {
         LocalDateTime startDate = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(14, 0));
         LocalDateTime endDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 59, 59));
-
-        return new JpaPagingItemReaderBuilder<Order>()
+//        LocalDateTime startDate = LocalDateTime.now();
+//        .queryString("SELECT o FROM Order o WHERE o.status in :statuses AND o.createdAt < :startDate")
+        List<OrderStatus> statuses = List.of(OrderStatus.PAYMENT_COMPLETE,OrderStatus.PREPARING_PRODUCT,OrderStatus.IN_TRANSIT);
+        return new JpaCursorItemReaderBuilder<Order>()
                 .name("OrderReader")
                 .entityManagerFactory(entityManagerFactory)
                 // 실행할 JPQL 쿼리 (결제완료이면서 어제 14시 이후 오늘 13시59분59초 이전 상태)
-                .queryString("SELECT o.status FROM Order o WHERE o.status = 'PAYMENT_COMPLETE' AND o.created_at BETWEEN :startDate AND :endDate")
+                .queryString("SELECT o FROM Order o WHERE o.status in :statuses AND o.createdAt BETWEEN :startDate AND :endDate")
                 .parameterValues(Map.of(
+                        "statuses", statuses,
                         "startDate", startDate,
                         "endDate", endDate
-                ))
-                // 한 번에 가져올 페이지 사이즈 (보통 Chunk Size와 동일하게 맞춤)
-                .pageSize(CHUNK_SIZE)
-                .build();
+                )).build();
+
     }
 
     // ---------------------------------------------------------
-    // 👉 2. Processor: 데이터 가공하기
+    //  2. Processor: 데이터 가공하기
     // ---------------------------------------------------------
     @Bean
     public ItemProcessor<Order, Order> myProcessor() {
@@ -64,7 +67,7 @@ public class OrderBatchConfig {
     }
 
     // ---------------------------------------------------------
-    // 👉 3. Writer: 처리된 데이터 DB에 반영하기 (JpaItemWriter)
+    //  3. Writer: 처리된 데이터 DB에 반영하기 (JpaItemWriter)
     // ---------------------------------------------------------
     @Bean
     public JpaItemWriter<Order> myWriter(EntityManagerFactory entityManagerFactory) {
@@ -76,12 +79,12 @@ public class OrderBatchConfig {
     }
 
     // ---------------------------------------------------------
-    // ⚙️ Step 조립하기 (위에서 만든 3가지를 합침)
+    //  Step 조립하기 (위에서 만든 3가지를 합침)
     // ---------------------------------------------------------
     @Bean
     public Step orderDeliveryStep(JobRepository jobRepository,
                                   PlatformTransactionManager transactionManager,
-                                  JpaPagingItemReader<Order> myReader, // 파라미터로 주입받는 게 더 깔끔함
+                                  JpaCursorItemReader<Order> myReader,
                                   ItemProcessor<Order, Order> myProcessor,
                                   JpaItemWriter<Order> myWriter) {
 
@@ -98,10 +101,10 @@ public class OrderBatchConfig {
     // GlobalConfig에서 정의한 리스너와 ID 생성기를 주입받아 조립
     @Bean
     public Job orderDeliveryJob(JobRepository jobRepository,
-                            Step orderDeliveryStep,
-                            JobExecutionListener globalJobListener, // 👈 공통 리스너 가져옴
-                            RunIdIncrementer globalRunIdIncrementer) { // 👈 공통 생성기 가져옴
-        
+                                Step orderDeliveryStep,
+                                JobExecutionListener globalJobListener, // 👈 공통 리스너 가져옴
+                                RunIdIncrementer globalRunIdIncrementer) { // 👈 공통 생성기 가져옴
+
         return new JobBuilder("orderDeliveryJob", jobRepository)
                 .incrementer(globalRunIdIncrementer) // 매번 강제 실행되도록 파라미터 ID 증가
                 .listener(globalJobListener)         // 실패하면 슬랙 알람 오도록 부착

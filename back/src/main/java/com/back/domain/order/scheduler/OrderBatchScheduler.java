@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
-import org.springframework.batch.core.launch.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.launch.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.JobRestartException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +16,7 @@ public class OrderBatchScheduler {
     private final JobOperator jobOperator;
     private final Job orderDeliveryJob;
 
-    @Scheduled(cron = "0 5 14 * * *")
+    @Scheduled(cron = "0 0 14 * * *")
     public void runOrderDeliveryBatch() {
         log.info("스케줄러 기동 - orderDeliveryJob 실행 요청");
         try {

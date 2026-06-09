@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Configuration
@@ -18,7 +17,7 @@ public class BatchGlobalConfig {
 
 
     // ---------------------------------------------------------
-    // 1. 공통 스레드 풀 (병렬 Step이나 Multi-thread Chunk 처리에 사용)
+    //  1. 공통 스레드 풀 (병렬 Step이나 Multi-thread Chunk 처리에 사용)
     // ---------------------------------------------------------
     @Bean(name = "globalBatchTaskExecutor")
     public ThreadPoolTaskExecutor globalBatchTaskExecutor() {
@@ -35,7 +34,7 @@ public class BatchGlobalConfig {
     }
 
     // ---------------------------------------------------------
-    // 2. 공통 Job 리스너 (모든 Job에 주입해서 실패/성공 여부 로깅 및 알림)
+    //  2. 공통 Job 리스너 (모든 Job에 주입해서 실패/성공 여부 로깅 및 알림)
     // ---------------------------------------------------------
     @Bean
     public JobExecutionListener globalJobListener() {
@@ -43,21 +42,21 @@ public class BatchGlobalConfig {
 
             @Override
             public void beforeJob(JobExecution jobExecution) {
-                log.info("▶️ [배치 시작] Job Name: {}, 파라미터: {}",
+                log.info(" [배치 시작] Job Name: {}, 파라미터: {}",
                         jobExecution.getJobInstance().getJobName(),
                         jobExecution.getJobParameters());
             }
 
             @Override
             public void afterJob(JobExecution jobExecution) {
-                long duration = Duration.between(jobExecution.getEndTime(), jobExecution.getStartTime()).toMillis();
+                long duration = Duration.between(jobExecution.getStartTime(), jobExecution.getEndTime()).toMillis();
                 if (jobExecution.getStatus() == BatchStatus.FAILED) {
-                    log.error("❌ [배치 실패] Job Name: {}, 걸린 시간: {}ms",
+                    log.error(" [배치 실패] Job Name: {}, 걸린 시간: {}ms",
                             jobExecution.getJobInstance().getJobName(), duration);
-                    // 👉 실무에서는 보통 여기에 Slack/Teams API 호출 코드를 넣어서
-                    // 배치가 터지면 개발팀 메신저로 알람이 오게 만듦
+                    //  실무에서는 보통 여기에 Slack/Teams API 호출 코드를 넣어서
+                    //  배치가 터지면 개발팀 메신저로 알람이 오게 만듦
                 } else if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-                    log.info("✅ [배치 성공] Job Name: {}, 걸린 시간: {}ms",
+                    log.info(" [배치 성공] Job Name: {}, 걸린 시간: {}ms",
                             jobExecution.getJobInstance().getJobName(), duration);
                 }
             }
@@ -65,7 +64,7 @@ public class BatchGlobalConfig {
     }
 
     // ---------------------------------------------------------
-    // 3. 공통 고유 ID 생성기 (Job을 여러 번 강제 재실행할 때 필요)
+    //  3. 공통 고유 ID 생성기 (Job을 여러 번 강제 재실행할 때 필요)
     // ---------------------------------------------------------
     @Bean
     public RunIdIncrementer globalRunIdIncrementer() {
