@@ -1,5 +1,4 @@
 #!/bin/bash
-exit 0
 echo "푸쉬 전 테스트 실행 중..."
   cd "$(git rev-parse --show-toplevel)/back" && ./gradlew test
 
