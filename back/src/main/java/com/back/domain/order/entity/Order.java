@@ -50,4 +50,11 @@ public class Order extends BaseEntity {
         final Order order = new Order(email, address, status, totalPrice);
         return order;
     }
+
+    public void advanceToNextStatus() {
+        if(this.status == OrderStatus.PAYMENT_COMPLETE) this.status = OrderStatus.PREPARING_PRODUCT;
+        else if(this.status == OrderStatus.PREPARING_PRODUCT) this.status = OrderStatus.IN_TRANSIT;
+        else if(this.status == OrderStatus.IN_TRANSIT) this.status = OrderStatus.DELIVERED;
+    }
+
 }

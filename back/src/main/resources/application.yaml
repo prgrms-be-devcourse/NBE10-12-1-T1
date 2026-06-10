@@ -9,6 +9,13 @@ spring:
   datasource:
     hikari:
       auto-commit: false
+  batch:
+    jdbc:
+      # 서버 기동 시 DB에 스프링 배치 메타 테이블을 자동 생성 (실제 운영 환경 DB에서는 never 권장)
+      initialize-schema: always
+    job:
+      # 서버가 켜질 때 Job이 멋대로 1회 자동 실행되는 것을 방지 (스케줄러 등으로 제어하기 위함)
+      enabled: false
   jpa:
     show-sql: true
     hibernate:

@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+    implementation ("org.springframework.boot:spring-boot-starter-batch-jdbc")
     compileOnly("org.projectlombok:lombok")
     // ---------
     // 이렇게 3개가 있어야 localhost:{port}/h2-console이 가능
