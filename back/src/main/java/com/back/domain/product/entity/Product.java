@@ -1,6 +1,5 @@
 package com.back.domain.product.entity;
 
-import com.back.global.exception.InsufficientStockException;
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,15 +44,5 @@ public class Product extends BaseEntity {
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
-    }
-
-    public void decreaseStock(Integer amount) {
-        if (amount == null|| amount <=0) {
-            throw new IllegalArgumentException("최소 수량은 1개 이상입니다.");
-        }
-        if(this.stock < amount) {
-            throw new InsufficientStockException();
-        }
-        this.stock -= amount;
     }
 }
