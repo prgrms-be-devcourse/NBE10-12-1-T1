@@ -203,9 +203,7 @@ class OrderControllerTest {
     //동시성 테스트 이므로 트랜잭션 없이 실행
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void t4() throws Exception {
-        Product product = productRepository.saveAndFlush(
-                new Product("맛있는 원두", 2000, 10, "image.com")
-        );
+        Product product = productRepository.save(new Product("맛있는 원두", 2000, 10, "image.com"));
 
         String email = "input@naver.com";
         long orderCountBefore = orderRepository.count();
