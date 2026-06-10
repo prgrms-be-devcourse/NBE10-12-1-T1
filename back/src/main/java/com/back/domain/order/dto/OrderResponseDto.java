@@ -19,15 +19,12 @@ public record OrderResponseDto(Long id,
     public static OrderResponseDto from(Order order) {
         List<OrderItemResponseDto> items = new ArrayList<>();
 
-        int totalPrice = 0;
-
         for(OrderItem orderItem : order.getOrderItems()) {
             items.add(new OrderItemResponseDto(
                     orderItem.getName(),
                     orderItem.getAmount(),
                     orderItem.getPrice()
             ));
-            totalPrice += orderItem.getPrice() * orderItem.getAmount();
         }
 
         return new OrderResponseDto(
@@ -35,7 +32,7 @@ public record OrderResponseDto(Long id,
                 order.getEmail(),
                 order.getAddress(),
                 items,
-                totalPrice,
+                order.getTotalPrice(),
                 order.getStatus().getNickname(),
                 order.getCreatedAt()
         );
