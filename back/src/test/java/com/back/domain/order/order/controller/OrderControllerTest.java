@@ -263,8 +263,7 @@ class OrderControllerTest {
             //하나는 성공하고 다른 하나는 재고 부족
             Assertions.assertEquals(List.of(201, 409), statuses);
 
-            Product result = productRepository.findByIdAndDeletedAtIsNull(product.getId())
-                    .orElseThrow();
+            Product result = productRepository.findByIdAndDeletedAtIsNull(product.getId()).orElseThrow();
 
             //성공한 주문 7개만 차감
             Assertions.assertEquals(3, result.getStock());
