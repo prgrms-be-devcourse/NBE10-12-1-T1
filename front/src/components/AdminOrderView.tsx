@@ -5,6 +5,13 @@ import type { AdminOrder } from '@/types/order';
 
 const API = 'http://localhost:8080/api/v1';
 
+const STATUS_STYLE: Record<string, { background: string; color: string }> = {
+  '결제 완료':    { background: '#fef9c3', color: '#854d0e' },
+  '상품 준비 중': { background: '#dbeafe', color: '#1e40af' },
+  '배송 중':     { background: '#ede9fe', color: '#5b21b6' },
+  '배송 완료':   { background: '#dcfce7', color: '#166534' },
+};
+
 function formatAddress(address: string) {
   const match = address.match(/^(\d{5})\s(.+)$/);
   if (match) return { zipcode: match[1], street: match[2] };
@@ -152,7 +159,7 @@ export default function AdminOrderView({ orders }: Props) {
 
                               <span
                                 className="text-sm font-semibold px-2.5 py-1 rounded-full flex-shrink-0"
-                                style={{ background: '#fef9c3', color: '#854d0e' }}
+                                style={STATUS_STYLE[order.status] ?? { background: 'var(--line)', color: 'var(--ink-soft)' }}
                               >
                                 {order.status}
                               </span>
