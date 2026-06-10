@@ -1,5 +1,6 @@
 package com.back.domain.product.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ public class ProductRequestDto {
             @NotBlank(message = "상품 이름은 필수입니다")
             String name,
             @NotNull(message = "가격은 필수입니다")
+            @Min(value = 0, message = "가격은 0원 이상이어야 합니다.")
             Integer price,
             @NotNull(message = "초기 재고는 필수입니다.")
             @Min(value = 0, message = "재고는 0개 이상이어야 합니다.")
@@ -28,5 +30,10 @@ public class ProductRequestDto {
             @Min(value = 0, message = "재고는 0개 이상이어야 합니다.")
             Integer stock,
             String imgUrl
-    ) {}
+    ) {
+        @AssertTrue(message = "수정할 상품 정보를 하나 이상 입력해야 합니다.")
+        public boolean isUpdateRequested() {
+            return name != null || price != null || stock != null || imgUrl != null;
+        }
+    }
 }
