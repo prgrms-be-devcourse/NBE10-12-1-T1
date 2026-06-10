@@ -69,21 +69,21 @@ public class AdminProductControllerTest {
     @Test
     @DisplayName("관리자 상품 목록 조회 성공")
     void t2() throws Exception {
-        productService.create("맛있는 원두", 30000, 200, "coffee1.jpg");
-        productService.create("더 맛있는 원두", 45000, 400, "coffee2.jpg");
+        Product product1 = productService.create("맛있는 원두", 30000, 200, "coffee1.jpg");
+        Product product2 = productService.create("더 맛있는 원두", 45000, 400, "coffee2.jpg");
 
         mockMvc.perform(get("/api/v1/admin/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(2))
-                .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.data[0].id").value(product1.getId()))
                 .andExpect(jsonPath("$.data[0].name").value("맛있는 원두"))
                 .andExpect(jsonPath("$.data[0].price").value(30000))
                 .andExpect(jsonPath("$.data[0].stock").value(200))
                 .andExpect(jsonPath("$.data[0].imgUrl").value("coffee1.jpg"))
 
-                .andExpect(jsonPath("$.data[1].id").value(2))
+                .andExpect(jsonPath("$.data[1].id").value(product2.getId()))
                 .andExpect(jsonPath("$.data[1].name").value("더 맛있는 원두"))
                 .andExpect(jsonPath("$.data[1].price").value(45000))
                 .andExpect(jsonPath("$.data[1].stock").value(400))
