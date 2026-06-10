@@ -10,13 +10,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ResponseDto<Void>> handleProductNotFound() {
+    public ResponseEntity<ResponseDto<Void>> handleProductNotFound(
+            ProductNotFoundException e
+    ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ResponseDto<>(
-                        "404-1",
-                        "상품을 찾을 수 없습니다.",
-                        null
-                ));
+                .body(new ResponseDto<>("404-1", e.getMessage(), null));
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ResponseDto<Void>> handleOrderNotFound(
+            OrderNotFoundException e
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ResponseDto<>("404-2", e.getMessage(), null));
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ResponseDto<Void>> handleInsufficientStock(
+            InsufficientStockException e
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ResponseDto<>("409-1", e.getMessage(), null));
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseDto<Void>> handleMethodArgumentNotValid(
