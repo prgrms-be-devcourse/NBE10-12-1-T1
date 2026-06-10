@@ -8,6 +8,8 @@ import com.back.domain.order.entity.OrderItem;
 import com.back.domain.order.repository.OrderRepository;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
+import com.back.global.exception.OrderNotFoundException;
+import com.back.global.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -65,7 +66,7 @@ public class OrderService {
         log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
         Map<Long, Product> productMap = productIds.stream().map(id ->
                         productRepository.findByIdAndDeletedAtIsNull(id)
-                                .orElseThrow(NoSuchElementException::new))
+                                .orElseThrow(ProductNotFoundException::new))
                 .collect(Collectors.toMap(Product::getId, p -> p));
         return productMap;
     }
@@ -109,7 +110,7 @@ public class OrderService {
 
     public List<OrderItemResponseDto> getOrderItems(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(OrderNotFoundException::new);
 
         return order.getOrderItems().stream()
                 .map(OrderItemResponseDto::from)
