@@ -92,11 +92,12 @@ class OrderControllerTest {
 
         Order order = Order.create("input@naver.com", "서울 OO구", orderItems, 1L);
         orderRepository.save(order);
+        orderItem.assignOrder(order);
 
         mockMvc.perform(get("/api/v1/admin/orders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("관리자 주문 목록 조회 성공"))
+                .andExpect(jsonPath("$.message").value("주문 목록 조회 성공"))
                 .andExpect(jsonPath("$.data[0].id").value(order.getId()))
                 .andExpect(jsonPath("$.data[0].email").value("input@naver.com"))
                 .andExpect(jsonPath("$.data[0].address").value("서울 OO구"))
