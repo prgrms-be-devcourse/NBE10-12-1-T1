@@ -24,7 +24,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/admin/orders")
-    @Operation(summary = "주문 목록 조회")
+    @Operation(summary = "관리자 주문 목록 조회")
     public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
         List<OrderResponseDto> orders = orderService.adminOrderList();
         return ResponseEntity.ok(new ResponseDto<>("200-1", "관리자 주문 목록 조회 성공", orders));
@@ -38,12 +38,12 @@ public class OrderController {
     }
 
     @GetMapping("/admin/orders/{id}/order-items")
-    @Operation(summary = "주문 아이템 목록 조회")
+    @Operation(summary = "관리자 주문 아이템 목록 조회")
     public ResponseEntity<ResponseDto<List<OrderItemResponseDto>>> getOrderItems(@PathVariable Long id) {
         List<OrderItemResponseDto> orderItems = orderService.getOrderItems(id);
 
         return ResponseEntity.ok(
-                new ResponseDto<>("200-1", "주문 아이템 목록 조회 성공", orderItems)
+                new ResponseDto<>("200-1", "관리자 주문 아이템 목록 조회 성공", orderItems)
         );
     }
 }

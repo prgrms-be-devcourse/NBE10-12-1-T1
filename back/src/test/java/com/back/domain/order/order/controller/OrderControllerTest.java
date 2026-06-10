@@ -69,7 +69,7 @@ class OrderControllerTest {
         mockMvc.perform(get("/api/v1/admin/orders/{id}/order-items", order.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("주문 아이템 목록 조회 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 주문 아이템 목록 조회 성공"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].name").value("맛있는 원두"))
@@ -86,7 +86,6 @@ class OrderControllerTest {
         Long pid = product.getId();
 
         List<OrderItem> orderItems = new ArrayList<>();
-        //변경해야 테스트 구동 가능 추후 구현 시 다시 되돌려야 할까요?
         OrderItem orderItem = OrderItem.create(pid, product.getName(), product.getPrice(), 10);
         orderItems.add(orderItem);
 
@@ -120,7 +119,7 @@ class OrderControllerTest {
         sb.append("},");
         sb.append("{");
         sb.append("\"productId\":").append("\"").append(p2Id).append("\",");
-        sb.append("\"amount\":").append("\"").append(20).append("\"");
+        sb.append("\"amount\":").append("\"").append(15).append("\"");
         sb.append("}");
         sb.append("]");
         sb.append("}");
@@ -134,7 +133,7 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.id").exists())
                 .andExpect(jsonPath("$.data.email").value("input@naver.com"))
                 .andExpect(jsonPath("$.data.address").value("서울 OO구 OO로, OO아파트 OO동 OO호"))
-                .andExpect(jsonPath("$.data.totalPrice").value(80000))
+                .andExpect(jsonPath("$.data.totalPrice").value(65000))
                 .andExpect(jsonPath("$.data.orderItems[0].name").value("맛있는 원두"))
                 .andExpect(jsonPath("$.data.orderItems[0].amount").value(10))
                 .andExpect(jsonPath("$.data.orderItems[0].price").value(2000))
