@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { Product } from '@/types/order';
+import ConfirmModal from './ConfirmModal';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -25,22 +26,47 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
   const [name, setName] = useState(product?.name ?? '');
   const [price, setPrice] = useState(product?.price.toString() ?? '');
   const [stock, setStock] = useState(product?.stock?.toString() ?? '');
+  const [imgUrl, setImgUrl] = useState(product?.imgUrl ?? '');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isEdit = !!product;
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const json = await res.json();
+      if (json.url) setImgUrl(json.url);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const parsedPrice = parseInt(price.replace(/,/g, ''), 10);
     const parsedStock = parseInt(stock, 10);
     if (!name.trim() || isNaN(parsedPrice) || parsedPrice <= 0 || isNaN(parsedStock) || parsedStock < 0) return;
-    onSave({ name: name.trim(), price: parsedPrice, stock: parsedStock, imgUrl: product?.imgUrl ?? '' });
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = () => {
+    const parsedPrice = parseInt(price.replace(/,/g, ''), 10);
+    const parsedStock = parseInt(stock, 10);
+    setShowConfirm(false);
+    onSave({ name: name.trim(), price: parsedPrice, stock: parsedStock, imgUrl });
   };
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{ background: 'rgba(46,31,18,0.5)' }}
-      onClick={onClose}
     >
       <div
         style={{
@@ -51,7 +77,6 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
           padding: '40px',
           position: 'relative',
         }}
-        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -71,6 +96,59 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* 이미지 업로드 */}
+          <div>
+            <label className="block text-xs font-semibold tracking-wide uppercase mb-2" style={{ color: 'var(--muted)' }}>
+              상품 이미지
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <div className="flex gap-3 items-center">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all flex-shrink-0"
+                style={{
+                  background: uploading ? 'var(--line)' : 'var(--surface-2)',
+                  color: 'var(--ink-soft)',
+                  border: '1px solid var(--line)',
+                }}
+                onMouseEnter={(e) => { if (!uploading) e.currentTarget.style.background = 'var(--line)'; }}
+                onMouseLeave={(e) => { if (!uploading) e.currentTarget.style.background = 'var(--surface-2)'; }}
+              >
+                {uploading ? '업로드 중...' : '파일 선택'}
+              </button>
+              {imgUrl ? (
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imgUrl}
+                    alt="preview"
+                    className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                    style={{ border: '1px solid var(--line)' }}
+                  />
+                  <span className="text-xs truncate" style={{ color: 'var(--muted)' }}>{imgUrl.split('/').pop()}</span>
+                  <button
+                    type="button"
+                    onClick={() => setImgUrl('')}
+                    className="flex-shrink-0 text-xs cursor-pointer"
+                    style={{ color: 'var(--muted)', background: 'none', border: 'none', padding: 0 }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <span className="text-xs" style={{ color: 'var(--muted)' }}>이미지 없음</span>
+              )}
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-semibold tracking-wide uppercase mb-2" style={{ color: 'var(--muted)' }}>
               상품명
@@ -144,6 +222,34 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
           </div>
         </form>
       </div>
+
+      {showConfirm && (
+        <ConfirmModal
+          message={isEdit ? '다음 내용으로 수정하시겠습니까?' : '다음 내용으로 상품을 추가하시겠습니까?'}
+          onConfirm={handleConfirm}
+          onCancel={() => setShowConfirm(false)}
+        >
+          <div
+            className="rounded-xl p-4 flex flex-col gap-2"
+            style={{ background: 'var(--bg)', border: '1px solid var(--line)' }}
+          >
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>상품명</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--ink)', fontFamily: 'var(--font-display)' }}>{name.trim()}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>가격</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--ink)', fontFamily: 'var(--font-display)' }}>
+                {parseInt(price.replace(/,/g, ''), 10).toLocaleString()}원
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>재고</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--ink)', fontFamily: 'var(--font-display)' }}>{stock}개</span>
+            </div>
+          </div>
+        </ConfirmModal>
+      )}
     </div>
   );
 }

@@ -40,3 +40,15 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
+
+.scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: #ede5d8 transparent;
+}
+
+.scroll-area::-webkit-scrollbar { width: 4px; }
+.scroll-area::-webkit-scrollbar-track { background: transparent; }
+.scroll-area::-webkit-scrollbar-thumb { background: #ede5d8; border-radius: 999px; }
+
+.admin-mode .scroll-area { scrollbar-color: #8a6a4a transparent; }
+.admin-mode .scroll-area::-webkit-scrollbar-thumb { background: #8a6a4a; }

@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import type { Product } from '@/types/order';
+import ConfirmModal from './ConfirmModal';
 
 interface Props {
   products: Product[];
@@ -9,45 +11,36 @@ interface Props {
   onDeleteProduct?: (productId: number) => void;
 }
 
-const MAX_CARDS = 40;
+const DEFAULT_IMAGES = [
+  '/스크린샷 2026-06-10 오후 3.36.08.png',
+  '/스크린샷 2026-06-10 오후 3.36.27.png',
+  '/스크린샷 2026-06-10 오후 3.40.17.png',
+];
 
-function BeanPlaceholder({ name }: { name: string }) {
-  const label = name.slice(0, 6).toUpperCase();
+function ProductImage({ imgUrl, id, name }: { imgUrl: string; id: number; name: string }) {
+  const src = imgUrl || DEFAULT_IMAGES[id % DEFAULT_IMAGES.length];
   return (
-    <div
-      className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-1"
-      style={{
-        aspectRatio: '4 / 3',
-        background: `repeating-linear-gradient(135deg,
-          #e8d5c4 0px, #e8d5c4 11px,
-          #dfc9b5 11px, #dfc9b5 22px)`,
-      }}
-    >
-      <span
-        className="text-xs font-bold tracking-wider opacity-50 text-center leading-tight"
-        style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
-      >
-        {label}
-      </span>
-      <span
-        className="text-[9px] tracking-wide px-1.5 py-0.5 rounded"
-        style={{ background: 'rgba(255,255,255,0.5)', color: 'var(--ink-soft)' }}
-      >
-        원두 사진
-      </span>
-    </div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={name}
+      className="w-full object-cover"
+      style={{ aspectRatio: '4 / 4.12' }}
+    />
   );
 }
 
 export default function ProductList({ products, onAdd, isAdmin, onAddProduct, onEditProduct, onDeleteProduct }: Props) {
-  const ghostCount = Math.max(0, MAX_CARDS - products.length);
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; name: string } | null>(null);
+  const [ghostHovered, setGhostHovered] = useState(false);
+  const ghostCount = isAdmin ? 1 : Math.max(0, 8 - products.length);
 
   return (
     <div
-      className="rounded-2xl p-6 flex-1 overflow-y-auto"
+      className="rounded-2xl p-6 flex-1 overflow-y-auto scroll-area"
       style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--line)',
+        background: isAdmin ? '#3c3228' : 'var(--surface)',
+        border: isAdmin ? '1px solid #504235' : '1px solid var(--line)',
         boxShadow: '0 1px 2px rgba(46,31,18,.04), 0 8px 28px rgba(46,31,18,.06)',
       }}
     >
@@ -72,8 +65,8 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-          gap: 12,
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          gap: 20,
         }}
       >
         {products.map((product) => (
@@ -101,24 +94,24 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               className="w-full text-left cursor-pointer"
               style={{ background: 'none', border: 'none', padding: 0, display: 'block' }}
             >
-              <BeanPlaceholder name={product.name} />
-              <div className="p-2.5">
+              <ProductImage imgUrl={product.imgUrl} id={product.id} name={product.name} />
+              <div className="p-4" style={{ minHeight: 110 }}>
                 <p
-                  className="text-[10px] font-semibold tracking-[0.18em] uppercase mb-0.5 truncate"
-                  style={{ color: 'var(--muted)' }}
+                  className="text-base font-bold mb-1 truncate"
+                  style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)', fontWeight: 800 }}
                 >
                   {product.name}
                 </p>
                 {isAdmin && product.stock !== undefined && (
                   <p
-                    className="text-xs font-semibold leading-snug mb-1 truncate"
-                    style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+                    className="text-sm font-semibold mb-1 truncate"
+                    style={{ color: 'var(--ink-soft)' }}
                   >
                     재고 {product.stock}개
                   </p>
                 )}
                 <p
-                  className="text-sm font-bold"
+                  className="text-base font-bold"
                   style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
                 >
                   {product.price.toLocaleString()}원
@@ -141,7 +134,7 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
                   수정
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); onDeleteProduct?.(product.id); }}
+                  onClick={(e) => { e.stopPropagation(); setPendingDelete({ id: product.id, name: product.name }); }}
                   className="px-4 py-2 rounded-lg text-xs font-bold cursor-pointer transition-all"
                   style={{ background: '#e53e3e', color: 'white', border: 'none' }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = '#c53030'; }}
@@ -154,35 +147,65 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
           </div>
         ))}
 
-        {Array.from({ length: ghostCount }).map((_, i) => (
-          <div
-            key={`ghost-${i}`}
-            aria-hidden="true"
-            className="rounded-xl overflow-hidden"
-            style={{
-              background: 'var(--bg)',
-              border: '1px solid var(--line)',
-              opacity: 0.35,
-              pointerEvents: 'none',
-            }}
-          >
+        {Array.from({ length: ghostCount }).map((_, i) => {
+          const isLast = i === ghostCount - 1;
+          const hovered = isLast && ghostHovered;
+          return (
             <div
-              className="w-full flex items-center justify-center"
-              style={{ aspectRatio: '4 / 3', background: 'var(--surface-2)' }}
+              key={`ghost-${i}`}
+              className="rounded-xl overflow-hidden"
+              style={{
+                background: 'var(--bg)',
+                border: `1px solid ${hovered ? 'var(--accent)' : 'var(--line)'}`,
+                opacity: hovered ? 1 : 0.35,
+                transition: 'opacity 0.15s, border-color 0.15s',
+                cursor: isAdmin && isLast ? 'pointer' : 'default',
+              }}
+              onMouseEnter={() => isAdmin && isLast && setGhostHovered(true)}
+              onMouseLeave={() => setGhostHovered(false)}
+              onClick={() => isAdmin && isLast && onAddProduct?.()}
             >
-              <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-                <line x1="6" y1="6" x2="30" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="30" y1="6" x2="6" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+              <div
+                className="w-full flex items-center justify-center"
+                style={{ aspectRatio: '4 / 3', background: 'var(--surface-2)' }}
+              >
+                {hovered ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center"
+                      style={{ background: 'var(--accent)' }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+                        <line x1="7" y1="1" x2="7" y2="13" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                        <line x1="1" y1="7" x2="13" y2="7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                    <span className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>상품 추가</span>
+                  </div>
+                ) : (
+                  <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+                    <line x1="6" y1="6" x2="30" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="30" y1="6" x2="6" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                )}
+              </div>
+              <div className="p-2.5 flex flex-col gap-1.5">
+                <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '55%' }} />
+                <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '75%' }} />
+                <div className="h-2.5 rounded-full mt-0.5" style={{ background: 'var(--line)', width: '40%' }} />
+              </div>
             </div>
-            <div className="p-2.5 flex flex-col gap-1.5">
-              <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '55%' }} />
-              <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '75%' }} />
-              <div className="h-2.5 rounded-full mt-0.5" style={{ background: 'var(--line)', width: '40%' }} />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {pendingDelete !== null && (
+        <ConfirmModal
+          message={`'${pendingDelete.name}' 상품을 삭제하시겠습니까?`}
+          onConfirm={() => { onDeleteProduct?.(pendingDelete.id); setPendingDelete(null); }}
+          onCancel={() => setPendingDelete(null)}
+        />
+      )}
     </div>
   );
 }

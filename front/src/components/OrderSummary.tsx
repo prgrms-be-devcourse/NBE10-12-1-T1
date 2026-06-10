@@ -219,7 +219,7 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
           }}
         >
           {/* 장바구니 목록 */}
-          <div className="flex flex-col gap-3 mb-5" style={{ maxHeight: 180, overflowY: 'auto' }}>
+          <div className="flex flex-col gap-3 mb-5 scroll-area" style={{ maxHeight: 180, overflowY: 'auto' }}>
             {cart.map((item) => (
               <div key={item.product.id} className="flex items-center justify-between gap-2">
                 <span

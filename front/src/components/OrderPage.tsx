@@ -2,70 +2,23 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import ProductList from './ProductList';
-import OrderSummary from './OrderSummary';
 import LoginModal from './LoginModal';
+import OrderSummary from './OrderSummary';
 import ProductFormModal from './ProductFormModal';
 import AdminOrderView from './AdminOrderView';
-import type { Product, CartItem, Order } from '@/types/order';
+import OrderConfirmModal, { type OrderConfirmData } from './OrderConfirmModal';
+import type { Product, CartItem, AdminOrder } from '@/types/order';
 
-const API = 'http://localhost:8080';
+const API = 'http://localhost:8080/api/v1';
 
-function toProduct(p: { id: number; name: string; price: number; stock: number; img_url: string | null }) {
-  return { id: p.id, name: p.name, price: p.price, stock: p.stock, imgUrl: p.img_url ?? '' };
+function toProduct(p: { id: number; name: string; price: number; stock: number; imgUrl: string | null }) {
+  return { id: p.id, name: p.name, price: p.price, stock: p.stock, imgUrl: p.imgUrl ?? '' };
 }
 
-const DUMMY_ORDERS: Order[] = [
-  {
-    id: 'ORD-0001',
-    createdAt: new Date('2026-06-05T09:14:00'),
-    items: [
-      { product: { id: 1, name: '콜롬비아 나리뇨', price: 5000, stock: 0, imgUrl: '' }, quantity: 2 },
-      { product: { id: 3, name: '에티오피아 예가체프', price: 7500, stock: 0, imgUrl: '' }, quantity: 1 },
-    ],
-    total: 17500,
-    email: 'kim@gmail.com',
-    address: '서울시 마포구 합정동 123-4 101호',
-    zipcode: '04045',
-    status: 'delivered',
-  },
-  {
-    id: 'ORD-0002',
-    createdAt: new Date('2026-06-05T14:32:00'),
-    items: [
-      { product: { id: 5, name: '케냐 AA', price: 7000, stock: 0, imgUrl: '' }, quantity: 1 },
-    ],
-    total: 7000,
-    email: 'park@naver.com',
-    address: '경기도 성남시 분당구 판교로 88',
-    zipcode: '13529',
-    status: 'delivered',
-  },
-  {
-    id: 'ORD-0003',
-    createdAt: new Date('2026-06-06T08:05:00'),
-    items: [
-      { product: { id: 2, name: '브라질 세하 두 카파라오', price: 6000, stock: 0, imgUrl: '' }, quantity: 3 },
-      { product: { id: 4, name: '과테말라 안티구아', price: 5500, stock: 0, imgUrl: '' }, quantity: 2 },
-    ],
-    total: 29000,
-    email: 'lee@kakao.com',
-    address: '부산시 해운대구 우동 1234',
-    zipcode: '48094',
-    status: 'pending',
-  },
-  {
-    id: 'ORD-0004',
-    createdAt: new Date('2026-06-06T11:47:00'),
-    items: [
-      { product: { id: 3, name: '에티오피아 예가체프', price: 7500, stock: 0, imgUrl: '' }, quantity: 1 },
-    ],
-    total: 7500,
-    email: 'choi@daum.net',
-    address: '서울시 서초구 강남대로 123',
-    zipcode: '06594',
-    status: 'pending',
-  },
-];
+function toAdminOrder(o: { id: number; deliveryId: number; email: string; address: string; totalPrice: number; status: string; createdAt: string }): AdminOrder {
+  return { id: o.id, deliveryId: o.deliveryId, email: o.email, address: o.address, totalPrice: o.totalPrice, status: o.status, createdAt: o.createdAt };
+}
+
 
 interface FlyItem {
   id: string;
@@ -117,15 +70,17 @@ function FlyingDot({ startX, startY }: { startX: number; startY: number }) {
 
 export default function OrderPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>(DUMMY_ORDERS);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [adminTab, setAdminTab] = useState<'products' | 'orders'>('products');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [adminTab, setAdminTab] = useState<'products' | 'orders'>('products');
   const [flyItems, setFlyItems] = useState<FlyItem[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
+  const [orderConfirm, setOrderConfirm] = useState<OrderConfirmData | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string>('');
 
   const fetchProducts = useCallback((admin: boolean) => {
     fetch(`${API}${admin ? '/admin/products' : '/products'}`)
@@ -135,6 +90,13 @@ export default function OrderPage() {
   }, []);
 
   useEffect(() => { fetchProducts(false); }, [fetchProducts]);
+
+  const fetchAdminOrders = useCallback(() => {
+    fetch(`${API}/admin/orders`)
+      .then((r) => r.json())
+      .then((json) => setAdminOrders(json.data.map(toAdminOrder)))
+      .catch(console.error);
+  }, []);
 
   const handleAddToCart = (product: Product, e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -180,7 +142,7 @@ export default function OrderPage() {
       const res = await fetch(`${API}/admin/products/${editingProduct.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, img_url: data.imgUrl }),
+        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, imgUrl: data.imgUrl }),
       });
       const json = await res.json();
       const updated = toProduct(json.data);
@@ -193,7 +155,7 @@ export default function OrderPage() {
       const res = await fetch(`${API}/admin/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, img_url: data.imgUrl }),
+        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, imgUrl: data.imgUrl }),
       });
       const json = await res.json();
       setProducts((prev) => [...prev, toProduct(json.data)]);
@@ -207,21 +169,31 @@ export default function OrderPage() {
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
   }, []);
 
-  const handleCheckout = (form: { email: string; address: string; zipcode: string }) => {
-    const newOrder: Order = {
-      id: `ORD-${String(orders.length + 1).padStart(4, '0')}`,
-      createdAt: new Date(),
-      items: cart.map((item) => ({ ...item })),
-      total,
+  const handleCheckout = async (form: { email: string; address: string; zipcode: string }) => {
+    const fullAddress = `${form.zipcode} ${form.address}`.trim();
+    const body = {
       email: form.email,
-      address: form.address,
-      zipcode: form.zipcode,
-      status: 'pending',
+      address: fullAddress,
+      orderItems: cart.map((item) => ({ productId: item.product.id, amount: item.quantity })),
     };
-    setOrders((prev) => [newOrder, ...prev]);
-    setCart([]);
-    setIsOpen(false);
-    console.log('주문 저장:', newOrder);
+    try {
+      const res = await fetch(`${API}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setCheckoutError('');
+        setOrderConfirm(json.data);
+        setCart([]);
+        setIsOpen(false);
+      } else if (res.status === 409) {
+        setCheckoutError(json.message || '재고가 부족한 상품이 있습니다.');
+      }
+    } catch (err) {
+      console.error('주문 생성 실패:', err);
+    }
   };
 
   const handleLogin = (adminStatus: boolean) => {
@@ -231,6 +203,7 @@ export default function OrderPage() {
       setCart([]);
       setIsOpen(false);
       fetchProducts(true);
+      fetchAdminOrders();
     }
   };
 
@@ -240,19 +213,33 @@ export default function OrderPage() {
   );
 
   return (
-    <div className="h-screen pt-6 pb-4 px-6 flex flex-col overflow-hidden" style={{ background: 'var(--bg)' }}>
-      <div className="w-full px-4 flex flex-col flex-1 overflow-hidden">
+    <div className={`h-screen pt-6 pb-4 px-6 flex flex-col overflow-hidden${isAdmin ? ' admin-mode' : ''}`} style={{ background: isAdmin ? '#302820' : 'var(--bg)', transition: 'background 0.4s ease' }}>
+      <div className="w-full px-4 flex flex-col flex-1 overflow-hidden" style={{ maxWidth: 1600, margin: '0 auto' }}>
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Beantage logo" style={{ height: 80, width: 'auto' }} />
             <h1
               className="text-5xl font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+              style={{ fontFamily: 'var(--font-display)', color: isAdmin ? '#f5f0e8' : 'var(--ink)', transition: 'color 0.4s ease' }}
             >
               Beantage
             </h1>
+            {isAdmin && (
+              <span
+                className="text-xl font-bold tracking-widest px-4 py-2 rounded-xl self-center"
+                style={{
+                  background: 'var(--accent)',
+                  color: 'white',
+                  fontFamily: 'var(--font-body)',
+                  letterSpacing: '0.15em',
+                  marginTop: 8,
+                }}
+              >
+                ADMIN
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-3">
             {isAdmin && (
@@ -268,6 +255,7 @@ export default function OrderPage() {
                 if (isAdmin) {
                   setIsAdmin(false);
                   setAdminTab('products');
+                  setAdminOrders([]);
                   fetchProducts(false);
                 } else {
                   setIsLoginOpen(true);
@@ -275,20 +263,21 @@ export default function OrderPage() {
               }}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all"
               style={{
-                background: 'var(--surface)',
-                border: '1px solid var(--line)',
-                color: 'var(--ink-soft)',
+                background: isAdmin ? '#4a3e2e' : 'var(--surface)',
+                border: isAdmin ? '1px solid #6a5840' : '1px solid var(--line)',
+                color: isAdmin ? '#c8b89a' : 'var(--ink-soft)',
                 fontFamily: 'var(--font-body)',
+                transition: 'background 0.4s ease, border-color 0.4s ease, color 0.4s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--ink)';
-                e.currentTarget.style.color = 'var(--bg)';
-                e.currentTarget.style.borderColor = 'var(--ink)';
+                e.currentTarget.style.background = isAdmin ? '#6a5840' : 'var(--ink)';
+                e.currentTarget.style.color = isAdmin ? '#f5f0e8' : 'var(--bg)';
+                e.currentTarget.style.borderColor = isAdmin ? '#8a7858' : 'var(--ink)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--surface)';
-                e.currentTarget.style.color = 'var(--ink-soft)';
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.background = isAdmin ? '#4a3e2e' : 'var(--surface)';
+                e.currentTarget.style.color = isAdmin ? '#c8b89a' : 'var(--ink-soft)';
+                e.currentTarget.style.borderColor = isAdmin ? '#6a5840' : 'var(--line)';
               }}
             >
               {isAdmin ? '로그아웃' : '로그인'}
@@ -298,22 +287,22 @@ export default function OrderPage() {
 
         {/* 어드민 탭 */}
         {isAdmin && (
-          <div className="flex gap-1 mb-3" style={{ borderBottom: '2px solid var(--line)', paddingBottom: 0 }}>
+          <div className="flex gap-1 mb-3" style={{ borderBottom: '2px solid #504235', paddingBottom: 0 }}>
             {(['products', 'orders'] as const).map((tab) => (
               <button
                 key={tab}
-                onClick={() => setAdminTab(tab)}
+                onClick={() => { setAdminTab(tab); if (tab === 'orders') fetchAdminOrders(); }}
                 className="px-5 py-2.5 text-sm font-semibold cursor-pointer transition-all rounded-t-lg"
                 style={{
-                  background: adminTab === tab ? 'var(--surface)' : 'transparent',
-                  color: adminTab === tab ? 'var(--ink)' : 'var(--muted)',
-                  border: adminTab === tab ? '1px solid var(--line)' : '1px solid transparent',
-                  borderBottom: adminTab === tab ? '2px solid var(--surface)' : '1px solid transparent',
+                  background: adminTab === tab ? '#3c3228' : 'transparent',
+                  color: adminTab === tab ? '#f5f0e8' : '#a08060',
+                  border: adminTab === tab ? '1px solid #504235' : '1px solid transparent',
+                  borderBottom: adminTab === tab ? '2px solid #3c3228' : '1px solid transparent',
                   marginBottom: adminTab === tab ? -2 : 0,
                   fontFamily: 'var(--font-body)',
                 }}
               >
-                {tab === 'products' ? '상품 관리' : `주문 내역 ${orders.length > 0 ? `(${orders.length})` : ''}`}
+                {tab === 'products' ? '상품 관리' : `주문 내역 ${adminOrders.length > 0 ? `(${adminOrders.length})` : ''}`}
               </button>
             ))}
           </div>
@@ -323,7 +312,7 @@ export default function OrderPage() {
         <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {isAdmin && adminTab === 'orders' ? (
-              <AdminOrderView orders={orders} />
+              <AdminOrderView orders={adminOrders} />
             ) : (
               <ProductList
                 products={products}
@@ -363,8 +352,64 @@ export default function OrderPage() {
         />
       )}
 
+
       {isLoginOpen && (
         <LoginModal onClose={() => setIsLoginOpen(false)} onLogin={handleLogin} />
+      )}
+
+      {orderConfirm && (
+        <OrderConfirmModal data={orderConfirm} onClose={() => setOrderConfirm(null)} />
+      )}
+
+      {checkoutError && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(46,31,18,0.5)' }}
+          onClick={() => setCheckoutError('')}
+        >
+          <div
+            style={{
+              background: 'var(--surface)',
+              borderRadius: 'var(--radius)',
+              boxShadow: '0 24px 72px rgba(46,31,18,.22)',
+              width: 400,
+              padding: '40px',
+              position: 'relative',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: '#fef2f2', border: '1px solid #fecaca' }}
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M9 5v5" stroke="#dc2626" strokeWidth="2" strokeLinecap="round"/>
+                  <circle cx="9" cy="13" r="1" fill="#dc2626"/>
+                  <circle cx="9" cy="9" r="7.5" stroke="#dc2626" strokeWidth="1.5"/>
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-base font-bold" style={{ color: 'var(--ink)' }}>재고 부족</h2>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>주문을 완료할 수 없습니다</p>
+              </div>
+            </div>
+
+            <p className="text-sm mb-6" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
+              {checkoutError}
+            </p>
+
+            <button
+              onClick={() => setCheckoutError('')}
+              className="w-full py-3.5 rounded-xl text-sm font-semibold cursor-pointer transition-all"
+              style={{ background: 'var(--ink)', color: 'var(--bg)', border: 'none' }}
+              onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
       )}
 
       {(isAddingProduct || editingProduct) && (
