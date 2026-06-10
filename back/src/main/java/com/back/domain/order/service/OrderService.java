@@ -35,7 +35,6 @@ public class OrderService {
     }
 
     public OrderResponseDto createOrder(CreateOrderRequest requestDto) {
-        //1. 요청들이 들어온 상품Map 생성 {1 : 1번상품},{2 : 2번상품}
         List<Long> productIds = requestDto.orderItems().stream()
                 .map(item -> item.productId()).toList();
         log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
@@ -44,26 +43,23 @@ public class OrderService {
                                 .orElseThrow(NoSuchElementException::new))
                 .collect(Collectors.toMap(Product::getId, p -> p));
 
-        //2. OrderItem Entity List 생성 및 상품 재고 감소
-        List<OrderItem> orderItems = requestDto.orderItems().stream().map(
-                item ->
-                {
-                    Product product = productMap.get(item.productId());
-                    product.decreaseStock(item.amount());
-
-                    return OrderItem.create(
-                            product.getId(),
-                            product.getName(),
-                            product.getPrice(),
-                            item.amount()
-                    );
-                })
-                .toList();
-
         Order order = Order.create(
                 requestDto.email(),
                 requestDto.address(),
                 OrderStatus.PAYMENT_COMPLETE);
+
+        requestDto.orderItems().forEach(item -> {
+            Product product = productMap.get(item.productId());
+            product.decreaseStock(item.amount());
+            OrderItem orderItem = OrderItem.create(
+                    product.getId(),
+                    product.getName(),
+                    product.getPrice(),
+                    item.amount()
+            );
+            orderItem.assignOrder(order);
+            order.getOrderItems().add(orderItem);
+        });
 
         orderRepository.save(order);
         return OrderResponseDto.from(order);
