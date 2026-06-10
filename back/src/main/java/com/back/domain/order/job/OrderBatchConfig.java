@@ -1,6 +1,7 @@
 package com.back.domain.order.job;
 
 import com.back.domain.order.entity.Order;
+import com.back.domain.order.enums.OrderStatus;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
@@ -39,7 +40,7 @@ public class OrderBatchConfig {
         LocalDateTime endDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 59, 59));
 //        LocalDateTime startDate = LocalDateTime.now();
 //        .queryString("SELECT o FROM Order o WHERE o.status in :statuses AND o.createdAt < :startDate")
-        List<OrderStatus> statuses = List.of(OrderStatus.PAYMENT_COMPLETE,OrderStatus.PREPARING_PRODUCT,OrderStatus.IN_TRANSIT);
+        List<OrderStatus> statuses = List.of(OrderStatus.PAYMENT_COMPLETE,OrderStatus.PREPARING_PRODUCT, OrderStatus.IN_TRANSIT);
         return new JpaCursorItemReaderBuilder<Order>()
                 .name("OrderReader")
                 .entityManagerFactory(entityManagerFactory)
