@@ -26,9 +26,9 @@ public class OrderController {
 
     @GetMapping("/admin/orders")
     @Operation(summary = "관리자 주문 목록 조회")
-    public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
+    public ResponseDto<List<OrderResponseDto>> adminOrderList() {
         List<OrderResponseDto> orders = orderService.adminOrderList();
-        return ResponseEntity.ok(new ResponseDto<>("200-1", "관리자 주문 목록 조회 성공", orders));
+        return new ResponseDto<>("200-1", "관리자 주문 목록 조회 성공", orders);
     }
 
     @PostMapping("/orders")
@@ -40,11 +40,9 @@ public class OrderController {
 
     @GetMapping("/admin/orders/{id}/order-items")
     @Operation(summary = "관리자 주문 아이템 목록 조회")
-    public ResponseEntity<ResponseDto<List<OrderItemResponseDto>>> getOrderItems(@PathVariable Long id) {
+    public ResponseDto<List<OrderItemResponseDto>> getOrderItems(@PathVariable Long id) {
         List<OrderItemResponseDto> orderItems = orderService.getOrderItems(id);
 
-        return ResponseEntity.ok(
-                new ResponseDto<>("200-1", "관리자 주문 아이템 목록 조회 성공", orderItems)
-        );
+        return new ResponseDto<>("200-1", "관리자 주문 아이템 목록 조회 성공", orderItems);
     }
 }
