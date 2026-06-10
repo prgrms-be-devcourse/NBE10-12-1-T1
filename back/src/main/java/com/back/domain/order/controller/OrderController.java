@@ -8,6 +8,7 @@ import com.back.global.annotation.ApiV1;
 import com.back.global.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class OrderController {
 
     @PostMapping("/orders")
     @Operation(summary = "주문 생성")
-    public ResponseDto<OrderResponseDto> createOrder(@RequestBody CreateOrderRequest requestDto) {
+    public ResponseDto<OrderResponseDto> createOrder(@Valid @RequestBody CreateOrderRequest requestDto) {
         OrderResponseDto response = orderService.createOrder(requestDto);
         return new ResponseDto<>("201-1", "주문 생성 되었습니다.", response);
     }
