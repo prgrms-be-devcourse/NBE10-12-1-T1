@@ -1,9 +1,7 @@
 package com.back.domain.order.service;
 
-import com.back.domain.order.dto.AdminLoginRequestDto;
 import com.back.domain.order.dto.OrderRequestDto.CreateOrderRequest;
 import com.back.domain.order.dto.OrderItemResponseDto;
-import com.back.domain.order.dto.OrderRequestDto.*;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.entity.Order;
 import com.back.domain.order.entity.OrderItem;
@@ -28,9 +26,6 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
-
-    private static final String ADMIN_ID = "admin";
-    private static final String ADMIN_PW = "admin";
 
     public List<OrderResponseDto> adminOrderList() {
         return orderRepository.findAll()
@@ -83,9 +78,4 @@ public class OrderService {
                 .toList();
     }
 
-    public void login(AdminLoginRequestDto requestDto) {
-        if (!ADMIN_ID.equals(requestDto.id()) || !ADMIN_PW.equals(requestDto.password())) {
-            throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
-        }
-    }
 }
