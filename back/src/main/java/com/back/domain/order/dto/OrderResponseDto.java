@@ -14,6 +14,7 @@ public record OrderResponseDto(Long id,
                                String address,
                                List<OrderItemResponseDto> orderItems,
                                Integer totalPrice,
+                               String status,
                                LocalDateTime createdAt) {
     public static OrderResponseDto from(Order order) {
         List<OrderItemResponseDto> items = new ArrayList<>();
@@ -35,6 +36,7 @@ public record OrderResponseDto(Long id,
                 order.getAddress(),
                 items,
                 totalPrice,
+                order.getStatus().getNickname(),
                 order.getCreatedAt()
         );
     }

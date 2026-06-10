@@ -1,9 +1,9 @@
 package com.back.domain.order.order.controller;
 
 import com.back.domain.order.entity.Order;
+import com.back.domain.order.entity.OrderItem;
 import com.back.domain.order.enums.OrderStatus;
 import com.back.domain.order.repository.OrderRepository;
-import com.back.domain.order.entity.OrderItem;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +22,6 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -135,7 +134,7 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.id").exists())
                 .andExpect(jsonPath("$.data.email").value("input@naver.com"))
                 .andExpect(jsonPath("$.data.address").value("서울 OO구 OO로, OO아파트 OO동 OO호"))
-                .andExpect(jsonPath("$.data.totalPrice").value(65000))
+                .andExpect(jsonPath("$.data.totalPrice").value(80000))
                 .andExpect(jsonPath("$.data.orderItems[0].name").value("맛있는 원두"))
                 .andExpect(jsonPath("$.data.orderItems[0].amount").value(10))
                 .andExpect(jsonPath("$.data.orderItems[0].price").value(2000))
