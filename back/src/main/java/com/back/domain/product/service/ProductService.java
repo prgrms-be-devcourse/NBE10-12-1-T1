@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductService {
     private final ProductRepository productRepository;
 
@@ -29,8 +30,6 @@ public class ProductService {
         return productRepository.findFirstByOrderByIdDesc();
     }
 
-
-    @Transactional
     public Product create(
             String name,
             int price,
@@ -42,7 +41,6 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    @Transactional
     public Product update(Long id, String name, Integer price, Integer stock, String imgUrl) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
@@ -52,11 +50,15 @@ public class ProductService {
 
     }
 
+    @Transactional(readOnly = true)
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
 
-    public void delete(Product product) {
-        productRepository.delete(product);
+    public void delete(Long id) {
+        Product product = productRepository.findByIdAndDeletedAtIsNull(id)
+                        .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
+
+        product.delete();
     }
 }

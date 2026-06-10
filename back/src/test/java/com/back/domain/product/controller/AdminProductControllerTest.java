@@ -125,7 +125,7 @@ public class AdminProductControllerTest {
     void deleteProducts() throws Exception {
         Product product1 = productService.create("상품 1", 30000, 200, "product1.jpg");
 
-        mockMvc.perform(delete("api/v1/admin/products/{id}", product1.getId()))
+        mockMvc.perform(delete("/api/v1/admin/products/{id}", product1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("상품이 삭제되었습니다"))
