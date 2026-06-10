@@ -91,6 +91,7 @@ class OrderControllerTest {
 
         Order order = Order.create("input@naver.com", "서울 OO구", OrderStatus.PAYMENT_COMPLETE);
         orderRepository.save(order);
+        orderItem.assignOrder(order);
 
         mockMvc.perform(get("/api/v1/admin/orders"))
                 .andExpect(status().isOk())
