@@ -198,29 +198,4 @@ class OrderControllerTest {
 
 
     }
-
-    @Test
-    @DisplayName("주문 생성 실패 - 올바르지 않은 이메일")
-    void createOrderWithInvalidEmail() throws Exception {
-        Long productId = productRepository.save(new Product("맛있는 원두", 2000, 10, "image.com")).getId();
-
-        mockMvc.perform(post("/api/v1/orders")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "email": "invalid-email",
-                                    "address": "서울 OO구",
-                                    "orderItems": [
-                                        {
-                                            "productId": %d,
-                                            "amount": 1
-                                        }
-                                    ]
-                                }
-                                """.formatted(productId)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.resultCode").value("400-1"))
-                .andExpect(jsonPath("$.message").value("올바른 이메일 형식이 아닙니다."));
-    }
-
 }

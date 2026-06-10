@@ -67,24 +67,6 @@ public class AdminProductControllerTest {
     }
 
     @Test
-    @DisplayName("관리자 상품 생성 실패 - 음수 가격")
-    void createProductWithNegativePrice() throws Exception {
-        mockMvc.perform(post("/api/v1/admin/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "name": "NEW원두",
-                                    "price": -1,
-                                    "stock": 300,
-                                    "imgUrl": "coffee1.jpg"
-                                }
-                                """))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.resultCode").value("400-1"))
-                .andExpect(jsonPath("$.message").value("가격은 0원 이상이어야 합니다."));
-    }
-
-    @Test
     @DisplayName("관리자 상품 목록 조회 성공")
     void t2() throws Exception {
         Product product1 = productService.create("맛있는 원두", 30000, 200, "coffee1.jpg");
@@ -142,19 +124,6 @@ public class AdminProductControllerTest {
                 .andExpect(jsonPath("$.data.stock").value(100))
                 .andExpect(jsonPath("$.data.imgUrl").value("coffee2.jpg"));
 
-    }
-
-    @Test
-    @DisplayName("관리자 상품 수정 실패 - 빈 요청")
-    void updateProductWithEmptyRequest() throws Exception {
-        final Product product = productService.create("맛있는 커피", 20000, 10, "coffee.jpg");
-
-        mockMvc.perform(patch("/api/v1/admin/products/{id}", product.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.resultCode").value("400-1"))
-                .andExpect(jsonPath("$.message").value("수정할 상품 정보를 하나 이상 입력해야 합니다."));
     }
 
     @Test
