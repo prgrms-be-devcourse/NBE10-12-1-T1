@@ -27,7 +27,7 @@ public class OrderController {
     @Operation(summary = "주문 목록 조회")
     public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
         List<OrderResponseDto> orders = orderService.adminOrderList();
-        return ResponseEntity.ok(new ResponseDto<>("200-1", "주문 목록 조회 완료", orders));
+        return ResponseEntity.ok(new ResponseDto<>("200-1", "관리자 주문 목록 조회 성공", orders));
     }
 
     @PostMapping("/orders")
