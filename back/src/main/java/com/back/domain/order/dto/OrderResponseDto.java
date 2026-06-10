@@ -10,6 +10,7 @@ import java.util.List;
 
 
 public record OrderResponseDto(Long id,
+                               Long deliveryId,
                                String email,
                                String address,
                                List<OrderItemResponseDto> orderItems,
@@ -29,6 +30,7 @@ public record OrderResponseDto(Long id,
 
         return new OrderResponseDto(
                 order.getId(),
+                order.getDeliveryId(),
                 order.getEmail(),
                 order.getAddress(),
                 items,
