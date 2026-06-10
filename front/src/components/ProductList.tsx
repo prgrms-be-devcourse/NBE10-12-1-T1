@@ -33,7 +33,7 @@ function ProductImage({ imgUrl, id, name }: { imgUrl: string; id: number; name: 
 }
 
 export default function ProductList({ products, onAdd, isAdmin, onAddProduct, onEditProduct, onDeleteProduct }: Props) {
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; name: string } | null>(null);
   const ghostCount = Math.max(0, MAX_CARDS - products.length);
 
   return (
@@ -135,7 +135,7 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
                   수정
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); setPendingDeleteId(product.id); }}
+                  onClick={(e) => { e.stopPropagation(); setPendingDelete({ id: product.id, name: product.name }); }}
                   className="px-4 py-2 rounded-lg text-xs font-bold cursor-pointer transition-all"
                   style={{ background: '#e53e3e', color: 'white', border: 'none' }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = '#c53030'; }}
@@ -178,11 +178,11 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
         ))}
       </div>
 
-      {pendingDeleteId !== null && (
+      {pendingDelete !== null && (
         <ConfirmModal
-          message="정말 삭제하시겠습니까?"
-          onConfirm={() => { onDeleteProduct?.(pendingDeleteId); setPendingDeleteId(null); }}
-          onCancel={() => setPendingDeleteId(null)}
+          message={`'${pendingDelete.name}' 상품을 삭제하시겠습니까?`}
+          onConfirm={() => { onDeleteProduct?.(pendingDelete.id); setPendingDelete(null); }}
+          onCancel={() => setPendingDelete(null)}
         />
       )}
     </div>

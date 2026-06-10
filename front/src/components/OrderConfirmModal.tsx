@@ -1,5 +1,11 @@
 'use client';
 
+function formatAddress(address: string) {
+  const match = address.match(/^(\d{5})\s(.+)$/);
+  if (match) return { zipcode: match[1], street: match[2] };
+  return { zipcode: null, street: address };
+}
+
 export interface OrderConfirmData {
   id: number;
   email: string;
@@ -102,7 +108,11 @@ export default function OrderConfirmModal({ data, onClose }: Props) {
           <p className="text-[11px] font-semibold tracking-wider uppercase mb-1.5" style={{ color: 'var(--muted)' }}>
             배송지
           </p>
-          <p className="text-sm" style={{ color: 'var(--ink)' }}>{data.address}</p>
+          {(() => { const { zipcode, street } = formatAddress(data.address); return (
+            <p className="text-sm" style={{ color: 'var(--ink)' }}>
+              {zipcode && <span className="font-semibold" style={{ color: 'var(--muted)' }}>({zipcode}) </span>}{street}
+            </p>
+          ); })()}
           <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>{data.email}</p>
         </div>
 

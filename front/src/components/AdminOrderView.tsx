@@ -5,6 +5,12 @@ import type { AdminOrder } from '@/types/order';
 
 const API = 'http://localhost:8080/api/v1';
 
+function formatAddress(address: string) {
+  const match = address.match(/^(\d{5})\s(.+)$/);
+  if (match) return { zipcode: match[1], street: match[2] };
+  return { zipcode: null, street: address };
+}
+
 interface OrderItem {
   name: string;
   amount: number;
@@ -137,7 +143,7 @@ export default function AdminOrderView({ orders }: Props) {
                               </p>
 
                               <p className="text-sm flex-1 truncate" style={{ color: 'var(--muted)' }}>
-                                {order.address}
+                                {(() => { const { zipcode, street } = formatAddress(order.address); return <>{zipcode && <span className="font-semibold">({zipcode}) </span>}{street}</>; })()}
                               </p>
 
                               <p className="text-base font-bold flex-shrink-0" style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}>
@@ -190,7 +196,11 @@ export default function AdminOrderView({ orders }: Props) {
                               )}
                               <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
                                 <p className="text-xs font-semibold tracking-wider uppercase mb-1" style={{ color: 'var(--muted)' }}>배송지</p>
-                                <p className="text-base" style={{ color: 'var(--ink)' }}>{order.address}</p>
+                                {(() => { const { zipcode, street } = formatAddress(order.address); return (
+                                  <p className="text-base" style={{ color: 'var(--ink)' }}>
+                                    {zipcode && <span className="font-semibold" style={{ color: 'var(--muted)' }}>({zipcode}) </span>}{street}
+                                  </p>
+                                ); })()}
                               </div>
                             </div>
                           )}
