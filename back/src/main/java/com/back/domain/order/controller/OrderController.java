@@ -1,6 +1,7 @@
 package com.back.domain.order.controller;
 
 import com.back.domain.order.dto.AdminLoginRequestDto;
+import com.back.domain.order.dto.OrderItemResponseDto;
 import com.back.domain.order.dto.OrderRequestDto.*;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.service.OrderService;
@@ -35,6 +36,16 @@ public class OrderController {
     public ResponseDto<OrderResponseDto> createOrder(@RequestBody CreateOrderRequest requestDto) {
         OrderResponseDto response = orderService.createOrder(requestDto);
         return new ResponseDto<>("201-1", "주문 생성 되었습니다.", response);
+    }
+
+    @GetMapping("/admin/orders/{id}/order-items")
+    @Operation(summary = "주문 아이템 목록 조회")
+    public ResponseEntity<ResponseDto<List<OrderItemResponseDto>>> getOrderItems(@PathVariable Long id) {
+        List<OrderItemResponseDto> orderItems = orderService.getOrderItems(id);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>("200-1", "주문 아이템 목록 조회 성공", orderItems)
+        );
     }
 
     @PostMapping("/admin/login")
