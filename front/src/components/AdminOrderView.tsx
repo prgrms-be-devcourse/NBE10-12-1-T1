@@ -68,8 +68,8 @@ export default function AdminOrderView({ orders }: Props) {
         <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>
           전체 {orders.length}건
         </span>
-        <span className="text-sm ml-2" style={{ color: 'var(--muted)' }}>
-          · 배송 묶음 {groupEntries.length}건
+        <span className="text-sm font-semibold ml-2" style={{ color: 'var(--muted)' }}>
+          · 배송요청건 {groupEntries.length}건
         </span>
       </div>
 
