@@ -19,11 +19,12 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor
 @AllArgsConstructor(access = PRIVATE)
 public class Order extends BaseEntity {
+    private Long deliveryId;
     private String email;
     private String address;
     @Enumerated(STRING)
     private OrderStatus status;
-    private int totalPrice;
+    private Integer totalPrice;
 
     @OneToMany(
             mappedBy = "order",
@@ -32,10 +33,22 @@ public class Order extends BaseEntity {
     )
     private final List<OrderItem> orderItems = new ArrayList<>();
 
+    public static Order create(String email, String address, List<OrderItem> orderItems, Long deliveryId) {
+        Order order = new Order();
+        order.email = email;
+        order.address = address;
+        order.deliveryId = deliveryId;
+        order.status = OrderStatus.PAYMENT_COMPLETE;
+        order.addItemsAndSetTotalPrice(orderItems);
+
+        return order;
+    }
+
     public static Order create(String email, String address, List<OrderItem> orderItems) {
         Order order = new Order();
         order.email = email;
         order.address = address;
+        order.deliveryId = deliveryId;
         order.status = OrderStatus.PAYMENT_COMPLETE;
         order.addItemsAndSetTotalPrice(orderItems);
 
