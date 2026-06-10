@@ -3,6 +3,7 @@ package com.back.domain.product.service;
 import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
+import com.back.global.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public class ProductService {
 
     public Product update(Long id, String name, Integer price, Integer stock, String imgUrl) {
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
+                .orElseThrow(ProductNotFoundException::new);
         product.update(name, price, stock, imgUrl);
 
         return product;
@@ -51,7 +52,7 @@ public class ProductService {
 
     public void delete(Long id) {
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
-                        .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
+                .orElseThrow(ProductNotFoundException::new);
 
         product.delete();
     }
