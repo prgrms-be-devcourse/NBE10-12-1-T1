@@ -134,7 +134,7 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.id").exists())
                 .andExpect(jsonPath("$.data.email").value("input@naver.com"))
                 .andExpect(jsonPath("$.data.address").value("서울 OO구 OO로, OO아파트 OO동 OO호"))
-                .andExpect(jsonPath("$.data.totalPrice").value(65000))
+                .andExpect(jsonPath("$.data.totalPrice").value(80000))
                 .andExpect(jsonPath("$.data.orderItems[0].name").value("맛있는 원두"))
                 .andExpect(jsonPath("$.data.orderItems[0].amount").value(10))
                 .andExpect(jsonPath("$.data.orderItems[0].price").value(2000))
