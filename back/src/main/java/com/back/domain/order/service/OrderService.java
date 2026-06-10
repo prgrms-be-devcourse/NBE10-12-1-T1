@@ -64,7 +64,7 @@ public class OrderService {
                 .map(item -> item.productId()).toList();
         log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
         Map<Long, Product> productMap = productIds.stream().map(id ->
-                        productRepository.findById(id)
+                        productRepository.findByIdAndDeletedAtIsNull(id)
                                 .orElseThrow(NoSuchElementException::new))
                 .collect(Collectors.toMap(Product::getId, p -> p));
         return productMap;
