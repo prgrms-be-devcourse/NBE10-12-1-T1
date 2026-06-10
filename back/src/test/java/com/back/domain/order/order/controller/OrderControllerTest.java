@@ -148,22 +148,4 @@ class OrderControllerTest {
         Assertions.assertEquals(5,product2.getStock());
     }
 
-    @Test
-    void adminLogin() throws Exception {
-        String body = """
-                {
-                    "id": "admin",
-                    "password": "admin"
-                }
-                """;
-
-        mockMvc.perform(post("/admin/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("로그인 되었습니다."))
-                .andExpect(jsonPath("$.data").doesNotExist());
-    }
 }

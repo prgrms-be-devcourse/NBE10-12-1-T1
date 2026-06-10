@@ -1,6 +1,5 @@
 package com.back.domain.order.controller;
 
-import com.back.domain.order.dto.AdminLoginRequestDto;
 import com.back.domain.order.dto.OrderItemResponseDto;
 import com.back.domain.order.dto.OrderRequestDto.*;
 import com.back.domain.order.dto.OrderResponseDto;
@@ -46,13 +45,5 @@ public class OrderController {
         return ResponseEntity.ok(
                 new ResponseDto<>("200-1", "주문 아이템 목록 조회 성공", orderItems)
         );
-    }
-
-    @PostMapping("/admin/login")
-    @Operation(summary = "관리자 로그인")
-    public ResponseDto<Void> login(@RequestBody AdminLoginRequestDto requestDto) {
-        orderService.login(requestDto);
-        return new ResponseDto<>("200-1", "로그인 되었습니다.", null);
-
     }
 }
