@@ -69,7 +69,7 @@ class OrderControllerTest {
         mockMvc.perform(get("/api/v1/admin/orders/{id}/order-items", order.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("주문 아이템 목록 조회 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 주문 아이템 목록 조회 성공"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].name").value("맛있는 원두"))
