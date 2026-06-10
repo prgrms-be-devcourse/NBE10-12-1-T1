@@ -49,11 +49,6 @@ public class ProductService {
         return product;
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Product> findById(Long id) {
-        return productRepository.findByIdAndDeletedAtIsNull(id);
-    }
-
     public void delete(Long id) {
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                         .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
