@@ -5,6 +5,7 @@ import com.back.domain.order.entity.OrderItem;
 import com.back.domain.order.repository.OrderRepository;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +105,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("POST api/v1/orders")
+    @DisplayName("주문 생성 성공")
     void createOrderTest() throws Exception {
         Long p1Id = productRepository.save(new Product("맛있는 원두", 2000, 10, "image.com")).getId();
         Long p2Id = productRepository.save(new Product("맛없는 원두", 3000, 20, "image.com")).getId();
@@ -122,7 +125,7 @@ class OrderControllerTest {
         sb.append("]");
         sb.append("}");
 
-        mockMvc.perform(
+        MvcResult result1 = mockMvc.perform(
                 post("/api/v1/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(sb.toString())
@@ -136,12 +139,64 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.orderItems[0].amount").value(10))
                 .andExpect(jsonPath("$.data.orderItems[0].price").value(2000))
                 .andExpect(jsonPath("$.data.orderItems[1].name").value("맛없는 원두"))
-                .andExpect(jsonPath("$.data.orderItems[1].amount").value(20))
-                .andExpect(jsonPath("$.data.orderItems[1].price").value(3000));
+                .andExpect(jsonPath("$.data.orderItems[1].amount").value(15))
+                .andExpect(jsonPath("$.data.orderItems[1].price").value(3000))
+                .andReturn();
         Product product1 = productRepository.findById(p1Id).get();
         Product product2 = productRepository.findById(p2Id).get();
         Assertions.assertEquals(0,product1.getStock());
         Assertions.assertEquals(5,product2.getStock());
+        String responseBody = result1.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        Long deliveryId1 = JsonPath.parse(responseBody).read("$.data.deliveryId", Long.class);
+
+        Long p3Id = productRepository.save(new Product("맛있는 원두_새로운맛", 2000, 10, "image.com")).getId();
+        Long p4Id = productRepository.save(new Product("맛없는 원두_새로운맛", 3000, 20, "image.com")).getId();
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append("{");
+        sb1.append("\"email\":").append("\"").append("input@naver.com").append("\",");
+        sb1.append("\"address\":").append("\"").append("서울 OO구 OO로, OO아파트 OO동 OO호").append("\",");
+        sb1.append("\"orderItems\":").append("[");
+        sb1.append("{");
+        sb1.append("\"productId\":").append("\"").append(p3Id).append("\",");
+        sb1.append("\"amount\":").append("\"").append(10).append("\"");
+        sb1.append("},");
+        sb1.append("{");
+        sb1.append("\"productId\":").append("\"").append(p4Id).append("\",");
+        sb1.append("\"amount\":").append("\"").append(15).append("\"");
+        sb1.append("}");
+        sb1.append("]");
+        sb1.append("}");
+
+        MvcResult result2 = mockMvc.perform(
+                        post("/api/v1/orders")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(sb1.toString())
+                )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.id").exists())
+                .andExpect(jsonPath("$.data.email").value("input@naver.com"))
+                .andExpect(jsonPath("$.data.address").value("서울 OO구 OO로, OO아파트 OO동 OO호"))
+                .andExpect(jsonPath("$.data.totalPrice").value(65000))
+                .andExpect(jsonPath("$.data.orderItems[0].name").value("맛있는 원두_새로운맛"))
+                .andExpect(jsonPath("$.data.orderItems[0].amount").value(10))
+                .andExpect(jsonPath("$.data.orderItems[0].price").value(2000))
+                .andExpect(jsonPath("$.data.orderItems[1].name").value("맛없는 원두_새로운맛"))
+                .andExpect(jsonPath("$.data.orderItems[1].amount").value(15))
+                .andExpect(jsonPath("$.data.orderItems[1].price").value(3000))
+                .andReturn();
+
+        String responseBody2 = result2.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        Long deliveryId2 = JsonPath.parse(responseBody2).read("$.data.deliveryId", Long.class);
+        Product product3 = productRepository.findById(p3Id).get();
+        Product product4 = productRepository.findById(p4Id).get();
+        Assertions.assertEquals(0,product3.getStock());
+        Assertions.assertEquals(5,product4.getStock());
+
+
+        Assertions.assertEquals(deliveryId1, deliveryId2);
+
+
+
     }
 
 }
