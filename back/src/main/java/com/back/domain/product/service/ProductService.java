@@ -27,7 +27,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Optional<Product> findLatest() {
-        return productRepository.findFirstByOrderByIdDesc();
+        return productRepository.findFirstByDeletedAtIsNullOrderByIdDesc();
     }
 
     public Product create(
@@ -42,17 +42,16 @@ public class ProductService {
     }
 
     public Product update(Long id, String name, Integer price, Integer stock, String imgUrl) {
-        Product product = productRepository.findById(id)
+        Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을수 없습니다."));
         product.update(name, price, stock, imgUrl);
+
         return product;
-
-
     }
 
     @Transactional(readOnly = true)
     public Optional<Product> findById(Long id) {
-        return productRepository.findById(id);
+        return productRepository.findByIdAndDeletedAtIsNull(id);
     }
 
     public void delete(Long id) {
