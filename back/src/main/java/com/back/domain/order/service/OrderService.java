@@ -63,7 +63,7 @@ public class OrderService {
         Order order = Order.create(
                 requestDto.email(),
                 requestDto.address(),
-                OrderStatus.PAYMENT_COMPLETE);
+                orderItems);
 
         orderRepository.save(order);
         return OrderResponseDto.from(order);
