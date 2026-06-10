@@ -48,6 +48,9 @@ public class Product extends BaseEntity {
     }
 
     public void decreaseStock(Integer amount) {
+        if (amount == null|| amount <=0) {
+            throw new IllegalArgumentException("최소 수량은 1개 이상입니다.");
+        }
         if(this.stock < amount) {
             throw new InsufficientStockException();
         }
