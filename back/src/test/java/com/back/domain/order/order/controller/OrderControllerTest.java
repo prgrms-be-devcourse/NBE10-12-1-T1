@@ -60,12 +60,14 @@ class OrderControllerTest {
         Order order = Order.create(
                 "input@naver.com",
                 "서울 OO구",
-                orderItems
+                OrderStatus.PAYMENT_COMPLETE
         );
+        order.getOrderItems().add(orderItem);
+        orderItem.assignOrder(order);
 
         orderRepository.save(order);
 
-        mockMvc.perform(get("/admin/orders/{id}/order-items", order.getId()))
+        mockMvc.perform(get("/api/v1/admin/orders/{id}/order-items", order.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("주문 아이템 목록 조회 성공"))
@@ -147,22 +149,4 @@ class OrderControllerTest {
         Assertions.assertEquals(5,product2.getStock());
     }
 
-    @Test
-    void adminLogin() throws Exception {
-        String body = """
-                {
-                    "id": "admin",
-                    "password": "admin"
-                }
-                """;
-
-        mockMvc.perform(post("/admin/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("로그인 되었습니다."))
-                .andExpect(jsonPath("$.data").doesNotExist());
-    }
 }

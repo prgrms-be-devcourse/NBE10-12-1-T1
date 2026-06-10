@@ -1,5 +1,6 @@
 package com.back.domain.order.dto;
 
+import com.back.domain.order.entity.OrderItem;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,4 +13,12 @@ public record OrderItemResponseDto(
         @NotNull
         @Min(1)
         Integer price) {
+
+        public static OrderItemResponseDto from(OrderItem orderItem) {
+                return new OrderItemResponseDto(
+                        orderItem.getName(),
+                        orderItem.getAmount(),
+                        orderItem.getPrice()
+                );
+        }
 }

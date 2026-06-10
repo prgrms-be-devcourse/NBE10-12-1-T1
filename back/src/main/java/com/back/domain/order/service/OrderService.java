@@ -1,8 +1,7 @@
 package com.back.domain.order.service;
 
-import com.back.domain.order.dto.AdminLoginRequestDto;
-import com.back.domain.order.dto.AdminOrderResponseDto;
 import com.back.domain.order.dto.OrderRequestDto.CreateOrderRequest;
+import com.back.domain.order.dto.OrderItemResponseDto;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.entity.Order;
 import com.back.domain.order.entity.OrderItem;
@@ -28,13 +27,10 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
-    private static final String ADMIN_ID = "admin";
-    private static final String ADMIN_PW = "admin";
-
-    public List<AdminOrderResponseDto> adminOrderList() {
+    public List<OrderResponseDto> adminOrderList() {
         return orderRepository.findAll()
                 .stream()
-                .map(AdminOrderResponseDto::from)
+                .map(OrderResponseDto::from)
                 .toList();
     }
 
@@ -73,9 +69,13 @@ public class OrderService {
         return OrderResponseDto.from(order);
     }
 
-    public void login(AdminLoginRequestDto requestDto) {
-        if (!ADMIN_ID.equals(requestDto.id()) || !ADMIN_PW.equals(requestDto.password())) {
-            throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
-        }
+    public List<OrderItemResponseDto> getOrderItems(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(NoSuchElementException::new);
+
+        return order.getOrderItems().stream()
+                .map(OrderItemResponseDto::from)
+                .toList();
     }
+
 }
