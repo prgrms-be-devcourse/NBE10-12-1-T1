@@ -213,7 +213,7 @@ export default function OrderPage() {
   );
 
   return (
-    <div className="h-screen pt-6 pb-4 px-6 flex flex-col overflow-hidden" style={{ background: isAdmin ? '#302820' : 'var(--bg)', transition: 'background 0.4s ease' }}>
+    <div className={`h-screen pt-6 pb-4 px-6 flex flex-col overflow-hidden${isAdmin ? ' admin-mode' : ''}`} style={{ background: isAdmin ? '#302820' : 'var(--bg)', transition: 'background 0.4s ease' }}>
       <div className="w-full px-4 flex flex-col flex-1 overflow-hidden" style={{ maxWidth: 1600, margin: '0 auto' }}>
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-3">

@@ -81,7 +81,7 @@ export default function AdminOrderView({ orders }: Props) {
       </div>
 
       {/* 주문 목록 */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
+      <div className="flex-1 overflow-y-auto scroll-area px-6 py-4">
         {orders.length === 0 ? (
           <div className="h-full flex items-center justify-center">
             <p className="text-sm" style={{ color: 'var(--muted)' }}>아직 접수된 주문이 없습니다.</p>

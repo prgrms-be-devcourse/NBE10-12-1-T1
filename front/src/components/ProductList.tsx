@@ -37,7 +37,7 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
 
   return (
     <div
-      className="rounded-2xl p-6 flex-1 overflow-y-auto"
+      className="rounded-2xl p-6 flex-1 overflow-y-auto scroll-area"
       style={{
         background: isAdmin ? '#3c3228' : 'var(--surface)',
         border: isAdmin ? '1px solid #504235' : '1px solid var(--line)',
