@@ -11,14 +11,10 @@ interface Props {
   onDeleteProduct?: (productId: number) => void;
 }
 
-const DEFAULT_IMAGES = [
-  '/스크린샷 2026-06-10 오후 3.36.08.png',
-  '/스크린샷 2026-06-10 오후 3.36.27.png',
-  '/스크린샷 2026-06-10 오후 3.40.17.png',
-];
+const DEFAULT_IMAGE = '/no_image.png';
 
-function ProductImage({ imgUrl, id, name }: { imgUrl: string; id: number; name: string }) {
-  const src = imgUrl || DEFAULT_IMAGES[id % DEFAULT_IMAGES.length];
+function ProductImage({ imgUrl, name }: { imgUrl: string; id: number; name: string }) {
+  const src = imgUrl || DEFAULT_IMAGE;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
