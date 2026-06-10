@@ -41,4 +41,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ResponseDto<>("400-1", errorMessage, null));
     }
+    @ExceptionHandler(DuplicateProductException.class)
+    public ResponseEntity<ResponseDto<Void>> handleDuplicateProduct(
+            DuplicateProductException e
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseDto<>("400-2", e.getMessage(), null));
+    }
 }

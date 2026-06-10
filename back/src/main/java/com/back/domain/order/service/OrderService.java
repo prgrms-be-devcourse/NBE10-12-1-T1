@@ -8,6 +8,7 @@ import com.back.domain.order.entity.OrderItem;
 import com.back.domain.order.repository.OrderRepository;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
+import com.back.global.exception.DuplicateProductException;
 import com.back.global.exception.OrderNotFoundException;
 import com.back.global.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,12 @@ public class OrderService {
         List<Long> productIds = requestDto.orderItems().stream()
                 .map(item -> item.productId()).toList();
         log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
+
+        long distinctCount = productIds.stream().distinct().count();
+        if (productIds.size() != distinctCount) {
+            throw new DuplicateProductException();
+        }
+
         Map<Long, Product> productMap = productIds.stream().map(id ->
                         productRepository.findByIdAndDeletedAtIsNull(id)
                                 .orElseThrow(ProductNotFoundException::new))
