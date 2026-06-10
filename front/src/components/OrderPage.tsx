@@ -11,8 +11,8 @@ import type { Product, CartItem, AdminOrder } from '@/types/order';
 
 const API = 'http://localhost:8080/api/v1';
 
-function toProduct(p: { id: number; name: string; price: number; stock: number; img_url: string | null }) {
-  return { id: p.id, name: p.name, price: p.price, stock: p.stock, imgUrl: p.img_url ?? '' };
+function toProduct(p: { id: number; name: string; price: number; stock: number; imgUrl: string | null }) {
+  return { id: p.id, name: p.name, price: p.price, stock: p.stock, imgUrl: p.imgUrl ?? '' };
 }
 
 function toAdminOrder(o: { id: number; deliveryId: number; email: string; address: string; totalPrice: number; status: string; createdAt: string }): AdminOrder {
@@ -80,6 +80,7 @@ export default function OrderPage() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [orderConfirm, setOrderConfirm] = useState<OrderConfirmData | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string>('');
 
   const fetchProducts = useCallback((admin: boolean) => {
     fetch(`${API}${admin ? '/admin/products' : '/products'}`)
@@ -141,7 +142,7 @@ export default function OrderPage() {
       const res = await fetch(`${API}/admin/products/${editingProduct.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, img_url: data.imgUrl }),
+        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, imgUrl: data.imgUrl }),
       });
       const json = await res.json();
       const updated = toProduct(json.data);
@@ -154,7 +155,7 @@ export default function OrderPage() {
       const res = await fetch(`${API}/admin/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, img_url: data.imgUrl }),
+        body: JSON.stringify({ name: data.name, price: data.price, stock: data.stock, imgUrl: data.imgUrl }),
       });
       const json = await res.json();
       setProducts((prev) => [...prev, toProduct(json.data)]);
@@ -183,9 +184,12 @@ export default function OrderPage() {
       });
       const json = await res.json();
       if (res.ok) {
+        setCheckoutError('');
         setOrderConfirm(json.data);
         setCart([]);
         setIsOpen(false);
+      } else if (res.status === 409) {
+        setCheckoutError(json.message || '재고가 부족한 상품이 있습니다.');
       }
     } catch (err) {
       console.error('주문 생성 실패:', err);
@@ -355,6 +359,57 @@ export default function OrderPage() {
 
       {orderConfirm && (
         <OrderConfirmModal data={orderConfirm} onClose={() => setOrderConfirm(null)} />
+      )}
+
+      {checkoutError && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(46,31,18,0.5)' }}
+          onClick={() => setCheckoutError('')}
+        >
+          <div
+            style={{
+              background: 'var(--surface)',
+              borderRadius: 'var(--radius)',
+              boxShadow: '0 24px 72px rgba(46,31,18,.22)',
+              width: 400,
+              padding: '40px',
+              position: 'relative',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: '#fef2f2', border: '1px solid #fecaca' }}
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M9 5v5" stroke="#dc2626" strokeWidth="2" strokeLinecap="round"/>
+                  <circle cx="9" cy="13" r="1" fill="#dc2626"/>
+                  <circle cx="9" cy="9" r="7.5" stroke="#dc2626" strokeWidth="1.5"/>
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-base font-bold" style={{ color: 'var(--ink)' }}>재고 부족</h2>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>주문을 완료할 수 없습니다</p>
+              </div>
+            </div>
+
+            <p className="text-sm mb-6" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
+              {checkoutError}
+            </p>
+
+            <button
+              onClick={() => setCheckoutError('')}
+              className="w-full py-3.5 rounded-xl text-sm font-semibold cursor-pointer transition-all"
+              style={{ background: 'var(--ink)', color: 'var(--bg)', border: 'none' }}
+              onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
       )}
 
       {(isAddingProduct || editingProduct) && (

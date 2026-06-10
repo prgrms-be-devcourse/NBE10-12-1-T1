@@ -11,8 +11,6 @@ interface Props {
   onDeleteProduct?: (productId: number) => void;
 }
 
-const MAX_CARDS = 40;
-
 const DEFAULT_IMAGES = [
   '/스크린샷 2026-06-10 오후 3.36.08.png',
   '/스크린샷 2026-06-10 오후 3.36.27.png',
@@ -34,7 +32,8 @@ function ProductImage({ imgUrl, id, name }: { imgUrl: string; id: number; name: 
 
 export default function ProductList({ products, onAdd, isAdmin, onAddProduct, onEditProduct, onDeleteProduct }: Props) {
   const [pendingDelete, setPendingDelete] = useState<{ id: number; name: string } | null>(null);
-  const ghostCount = Math.max(0, MAX_CARDS - products.length);
+  const [ghostHovered, setGhostHovered] = useState(false);
+  const ghostCount = isAdmin ? 1 : Math.max(0, 8 - products.length);
 
   return (
     <div
@@ -148,34 +147,56 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
           </div>
         ))}
 
-        {Array.from({ length: ghostCount }).map((_, i) => (
-          <div
-            key={`ghost-${i}`}
-            aria-hidden="true"
-            className="rounded-xl overflow-hidden"
-            style={{
-              background: 'var(--bg)',
-              border: '1px solid var(--line)',
-              opacity: 0.35,
-              pointerEvents: 'none',
-            }}
-          >
+        {Array.from({ length: ghostCount }).map((_, i) => {
+          const isLast = i === ghostCount - 1;
+          const hovered = isLast && ghostHovered;
+          return (
             <div
-              className="w-full flex items-center justify-center"
-              style={{ aspectRatio: '4 / 3', background: 'var(--surface-2)' }}
+              key={`ghost-${i}`}
+              className="rounded-xl overflow-hidden"
+              style={{
+                background: 'var(--bg)',
+                border: `1px solid ${hovered ? 'var(--accent)' : 'var(--line)'}`,
+                opacity: hovered ? 1 : 0.35,
+                transition: 'opacity 0.15s, border-color 0.15s',
+                cursor: isAdmin && isLast ? 'pointer' : 'default',
+              }}
+              onMouseEnter={() => isAdmin && isLast && setGhostHovered(true)}
+              onMouseLeave={() => setGhostHovered(false)}
+              onClick={() => isAdmin && isLast && onAddProduct?.()}
             >
-              <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-                <line x1="6" y1="6" x2="30" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="30" y1="6" x2="6" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+              <div
+                className="w-full flex items-center justify-center"
+                style={{ aspectRatio: '4 / 3', background: 'var(--surface-2)' }}
+              >
+                {hovered ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center"
+                      style={{ background: 'var(--accent)' }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+                        <line x1="7" y1="1" x2="7" y2="13" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                        <line x1="1" y1="7" x2="13" y2="7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                    <span className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>상품 추가</span>
+                  </div>
+                ) : (
+                  <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+                    <line x1="6" y1="6" x2="30" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="30" y1="6" x2="6" y2="30" stroke="var(--line)" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                )}
+              </div>
+              <div className="p-2.5 flex flex-col gap-1.5">
+                <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '55%' }} />
+                <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '75%' }} />
+                <div className="h-2.5 rounded-full mt-0.5" style={{ background: 'var(--line)', width: '40%' }} />
+              </div>
             </div>
-            <div className="p-2.5 flex flex-col gap-1.5">
-              <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '55%' }} />
-              <div className="h-2 rounded-full" style={{ background: 'var(--line)', width: '75%' }} />
-              <div className="h-2.5 rounded-full mt-0.5" style={{ background: 'var(--line)', width: '40%' }} />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {pendingDelete !== null && (
