@@ -1,6 +1,7 @@
 package com.back.domain.product.controller;
 
-import com.back.domain.product.dto.ProductRequestDto.*;
+import com.back.domain.product.dto.ProductRequestDto.CreateProductRequest;
+import com.back.domain.product.dto.ProductRequestDto.PatchProductRequest;
 import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;
@@ -36,7 +37,7 @@ public class AdminProductController {
         );
         return new ResponseDto<>(
                         "201-1",
-                        "상품 생성 성공",
+                        "관리자 상품 생성 성공",
                         ProductResponseDto.from(product)
         );
     }
@@ -45,10 +46,11 @@ public class AdminProductController {
     @Operation(summary = "관리자 상품 목록 조회")
     public ResponseDto<List<ProductResponseDto>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
-        return new ResponseDto<>("200", "상품 목록 조회 성공", products);
+        return new ResponseDto<>("200", "관리자 상품 목록 조회 성공", products);
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "관리자 상품 수정")
     public ResponseDto<ProductResponseDto> update(
             @PathVariable("id") Long id,
             @RequestBody @Valid PatchProductRequest requestDto
@@ -60,8 +62,8 @@ public class AdminProductController {
                 requestDto.stock(),
                 requestDto.imgUrl()
         );
-        return new ResponseDto<>("200-1", "상품 수정 성공", ProductResponseDto.from(product));
 
+        return new ResponseDto<>("200-1", "관리자 상품 수정 성공", ProductResponseDto.from(product));
     }
 
     @DeleteMapping("/{id}")
@@ -71,7 +73,7 @@ public class AdminProductController {
 
         return new ResponseDto<>(
                         "200-1",
-                        "상품이 삭제되었습니다",
+                        "관리자 상품 제거 성공",
                         null
         );
     }

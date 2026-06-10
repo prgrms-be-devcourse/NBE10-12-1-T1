@@ -57,7 +57,7 @@ public class AdminProductControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.resultCode").value("201-1"))
-                .andExpect(jsonPath("$.message").value("상품 생성 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 상품 생성 성공"))
                 .andExpect(jsonPath("$.data.id").value(product.getId()))
                 .andExpect(jsonPath("$.data.name").value("NEW원두"))
                 .andExpect(jsonPath("$.data.price").value(12000))
@@ -117,7 +117,7 @@ public class AdminProductControllerTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("상품 수정 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 상품 수정 성공"))
                 .andExpect(jsonPath("$.data.id").value(product.getId()))
                 .andExpect(jsonPath("$.data.name").value("더 맛있는 커피"))
                 .andExpect(jsonPath("$.data.price").value(25000))
@@ -134,7 +134,7 @@ public class AdminProductControllerTest {
         mockMvc.perform(delete("/api/v1/admin/products/{id}", product.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("상품이 삭제되었습니다"))
+                .andExpect(jsonPath("$.message").value("관리자 상품 제거 성공"))
                 .andExpect(jsonPath("$.data").doesNotExist());
 
         productRepository.flush();

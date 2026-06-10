@@ -1,8 +1,7 @@
 package com.back.domain.order.controller;
 
-import com.back.domain.order.dto.AdminLoginRequestDto;
-import com.back.domain.order.dto.AdminOrderResponseDto;
-import com.back.domain.order.dto.OrderRequestDto.*;
+import com.back.domain.order.dto.OrderItemResponseDto;
+import com.back.domain.order.dto.OrderRequestDto.CreateOrderRequest;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.service.OrderService;
 import com.back.global.annotation.ApiV1;
@@ -25,7 +24,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/admin/orders")
-    @Operation(summary = "주문 목록 조회")
+    @Operation(summary = "관리자 주문 목록 조회")
     public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
         List<OrderResponseDto> orders = orderService.adminOrderList();
         return ResponseEntity.ok(new ResponseDto<>("200-1", "관리자 주문 목록 조회 성공", orders));
@@ -38,11 +37,13 @@ public class OrderController {
         return new ResponseDto<>("201-1", "주문 생성 되었습니다.", response);
     }
 
-    @PostMapping("/admin/login")
-    @Operation(summary = "관리자 로그인")
-    public ResponseDto<Void> login(@RequestBody AdminLoginRequestDto requestDto) {
-        orderService.login(requestDto);
-        return new ResponseDto<>("200-1", "로그인 되었습니다.", null);
+    @GetMapping("/admin/orders/{id}/order-items")
+    @Operation(summary = "관리자 주문 아이템 목록 조회")
+    public ResponseEntity<ResponseDto<List<OrderItemResponseDto>>> getOrderItems(@PathVariable Long id) {
+        List<OrderItemResponseDto> orderItems = orderService.getOrderItems(id);
 
+        return ResponseEntity.ok(
+                new ResponseDto<>("200-1", "관리자 주문 아이템 목록 조회 성공", orderItems)
+        );
     }
 }
