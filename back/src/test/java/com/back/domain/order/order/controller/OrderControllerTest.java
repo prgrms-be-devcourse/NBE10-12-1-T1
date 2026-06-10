@@ -206,7 +206,7 @@ class OrderControllerTest {
         Product product = productRepository.save(new Product("맛있는 원두", 2000, 10, "image.com"));
 
         String email = "input@naver.com";
-        long orderCountBefore = orderRepository.count();
+        Long orderCountBefore = orderRepository.count();
 
         String requestBody = """
             {
