@@ -2,70 +2,23 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import ProductList from './ProductList';
-import OrderSummary from './OrderSummary';
 import LoginModal from './LoginModal';
+import OrderSummary from './OrderSummary';
 import ProductFormModal from './ProductFormModal';
 import AdminOrderView from './AdminOrderView';
-import type { Product, CartItem, Order } from '@/types/order';
+import OrderConfirmModal, { type OrderConfirmData } from './OrderConfirmModal';
+import type { Product, CartItem, AdminOrder } from '@/types/order';
 
-const API = 'http://localhost:8080';
+const API = 'http://localhost:8080/api/v1';
 
 function toProduct(p: { id: number; name: string; price: number; stock: number; img_url: string | null }) {
   return { id: p.id, name: p.name, price: p.price, stock: p.stock, imgUrl: p.img_url ?? '' };
 }
 
-const DUMMY_ORDERS: Order[] = [
-  {
-    id: 'ORD-0001',
-    createdAt: new Date('2026-06-05T09:14:00'),
-    items: [
-      { product: { id: 1, name: '콜롬비아 나리뇨', price: 5000, stock: 0, imgUrl: '' }, quantity: 2 },
-      { product: { id: 3, name: '에티오피아 예가체프', price: 7500, stock: 0, imgUrl: '' }, quantity: 1 },
-    ],
-    total: 17500,
-    email: 'kim@gmail.com',
-    address: '서울시 마포구 합정동 123-4 101호',
-    zipcode: '04045',
-    status: 'delivered',
-  },
-  {
-    id: 'ORD-0002',
-    createdAt: new Date('2026-06-05T14:32:00'),
-    items: [
-      { product: { id: 5, name: '케냐 AA', price: 7000, stock: 0, imgUrl: '' }, quantity: 1 },
-    ],
-    total: 7000,
-    email: 'park@naver.com',
-    address: '경기도 성남시 분당구 판교로 88',
-    zipcode: '13529',
-    status: 'delivered',
-  },
-  {
-    id: 'ORD-0003',
-    createdAt: new Date('2026-06-06T08:05:00'),
-    items: [
-      { product: { id: 2, name: '브라질 세하 두 카파라오', price: 6000, stock: 0, imgUrl: '' }, quantity: 3 },
-      { product: { id: 4, name: '과테말라 안티구아', price: 5500, stock: 0, imgUrl: '' }, quantity: 2 },
-    ],
-    total: 29000,
-    email: 'lee@kakao.com',
-    address: '부산시 해운대구 우동 1234',
-    zipcode: '48094',
-    status: 'pending',
-  },
-  {
-    id: 'ORD-0004',
-    createdAt: new Date('2026-06-06T11:47:00'),
-    items: [
-      { product: { id: 3, name: '에티오피아 예가체프', price: 7500, stock: 0, imgUrl: '' }, quantity: 1 },
-    ],
-    total: 7500,
-    email: 'choi@daum.net',
-    address: '서울시 서초구 강남대로 123',
-    zipcode: '06594',
-    status: 'pending',
-  },
-];
+function toAdminOrder(o: { id: number; deliveryId: number; email: string; address: string; totalPrice: number; status: string; createdAt: string }): AdminOrder {
+  return { id: o.id, deliveryId: o.deliveryId, email: o.email, address: o.address, totalPrice: o.totalPrice, status: o.status, createdAt: o.createdAt };
+}
+
 
 interface FlyItem {
   id: string;
@@ -117,15 +70,16 @@ function FlyingDot({ startX, startY }: { startX: number; startY: number }) {
 
 export default function OrderPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>(DUMMY_ORDERS);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [adminTab, setAdminTab] = useState<'products' | 'orders'>('products');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [adminTab, setAdminTab] = useState<'products' | 'orders'>('products');
   const [flyItems, setFlyItems] = useState<FlyItem[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
+  const [orderConfirm, setOrderConfirm] = useState<OrderConfirmData | null>(null);
 
   const fetchProducts = useCallback((admin: boolean) => {
     fetch(`${API}${admin ? '/admin/products' : '/products'}`)
@@ -135,6 +89,13 @@ export default function OrderPage() {
   }, []);
 
   useEffect(() => { fetchProducts(false); }, [fetchProducts]);
+
+  const fetchAdminOrders = useCallback(() => {
+    fetch(`${API}/admin/orders`)
+      .then((r) => r.json())
+      .then((json) => setAdminOrders(json.data.map(toAdminOrder)))
+      .catch(console.error);
+  }, []);
 
   const handleAddToCart = (product: Product, e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -207,21 +168,28 @@ export default function OrderPage() {
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
   }, []);
 
-  const handleCheckout = (form: { email: string; address: string; zipcode: string }) => {
-    const newOrder: Order = {
-      id: `ORD-${String(orders.length + 1).padStart(4, '0')}`,
-      createdAt: new Date(),
-      items: cart.map((item) => ({ ...item })),
-      total,
+  const handleCheckout = async (form: { email: string; address: string; zipcode: string }) => {
+    const fullAddress = `${form.zipcode} ${form.address}`.trim();
+    const body = {
       email: form.email,
-      address: form.address,
-      zipcode: form.zipcode,
-      status: 'pending',
+      address: fullAddress,
+      orderItems: cart.map((item) => ({ productId: item.product.id, amount: item.quantity })),
     };
-    setOrders((prev) => [newOrder, ...prev]);
-    setCart([]);
-    setIsOpen(false);
-    console.log('주문 저장:', newOrder);
+    try {
+      const res = await fetch(`${API}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setOrderConfirm(json.data);
+        setCart([]);
+        setIsOpen(false);
+      }
+    } catch (err) {
+      console.error('주문 생성 실패:', err);
+    }
   };
 
   const handleLogin = (adminStatus: boolean) => {
@@ -231,6 +199,7 @@ export default function OrderPage() {
       setCart([]);
       setIsOpen(false);
       fetchProducts(true);
+      fetchAdminOrders();
     }
   };
 
@@ -282,6 +251,7 @@ export default function OrderPage() {
                 if (isAdmin) {
                   setIsAdmin(false);
                   setAdminTab('products');
+                  setAdminOrders([]);
                   fetchProducts(false);
                 } else {
                   setIsLoginOpen(true);
@@ -317,7 +287,7 @@ export default function OrderPage() {
             {(['products', 'orders'] as const).map((tab) => (
               <button
                 key={tab}
-                onClick={() => setAdminTab(tab)}
+                onClick={() => { setAdminTab(tab); if (tab === 'orders') fetchAdminOrders(); }}
                 className="px-5 py-2.5 text-sm font-semibold cursor-pointer transition-all rounded-t-lg"
                 style={{
                   background: adminTab === tab ? '#3c3228' : 'transparent',
@@ -328,7 +298,7 @@ export default function OrderPage() {
                   fontFamily: 'var(--font-body)',
                 }}
               >
-                {tab === 'products' ? '상품 관리' : `주문 내역 ${orders.length > 0 ? `(${orders.length})` : ''}`}
+                {tab === 'products' ? '상품 관리' : `주문 내역 ${adminOrders.length > 0 ? `(${adminOrders.length})` : ''}`}
               </button>
             ))}
           </div>
@@ -338,7 +308,7 @@ export default function OrderPage() {
         <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {isAdmin && adminTab === 'orders' ? (
-              <AdminOrderView orders={orders} />
+              <AdminOrderView orders={adminOrders} />
             ) : (
               <ProductList
                 products={products}
@@ -378,8 +348,13 @@ export default function OrderPage() {
         />
       )}
 
+
       {isLoginOpen && (
         <LoginModal onClose={() => setIsLoginOpen(false)} onLogin={handleLogin} />
+      )}
+
+      {orderConfirm && (
+        <OrderConfirmModal data={orderConfirm} onClose={() => setOrderConfirm(null)} />
       )}
 
       {(isAddingProduct || editingProduct) && (

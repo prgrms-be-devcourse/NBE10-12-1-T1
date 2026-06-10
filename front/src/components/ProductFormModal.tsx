@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Product } from '@/types/order';
+import ConfirmModal from './ConfirmModal';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -27,12 +28,20 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
   const [stock, setStock] = useState(product?.stock?.toString() ?? '');
 
   const isEdit = !!product;
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const parsedPrice = parseInt(price.replace(/,/g, ''), 10);
     const parsedStock = parseInt(stock, 10);
     if (!name.trim() || isNaN(parsedPrice) || parsedPrice <= 0 || isNaN(parsedStock) || parsedStock < 0) return;
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = () => {
+    const parsedPrice = parseInt(price.replace(/,/g, ''), 10);
+    const parsedStock = parseInt(stock, 10);
+    setShowConfirm(false);
     onSave({ name: name.trim(), price: parsedPrice, stock: parsedStock, imgUrl: product?.imgUrl ?? '' });
   };
 
@@ -40,7 +49,6 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{ background: 'rgba(46,31,18,0.5)' }}
-      onClick={onClose}
     >
       <div
         style={{
@@ -51,7 +59,6 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
           padding: '40px',
           position: 'relative',
         }}
-        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -144,6 +151,34 @@ export default function ProductFormModal({ product, onSave, onClose }: Props) {
           </div>
         </form>
       </div>
+
+      {showConfirm && (
+        <ConfirmModal
+          message={isEdit ? '다음 내용으로 수정하시겠습니까?' : '다음 내용으로 상품을 추가하시겠습니까?'}
+          onConfirm={handleConfirm}
+          onCancel={() => setShowConfirm(false)}
+        >
+          <div
+            className="rounded-xl p-4 flex flex-col gap-2"
+            style={{ background: 'var(--bg)', border: '1px solid var(--line)' }}
+          >
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>상품명</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--ink)', fontFamily: 'var(--font-display)' }}>{name.trim()}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>가격</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--ink)', fontFamily: 'var(--font-display)' }}>
+                {parseInt(price.replace(/,/g, ''), 10).toLocaleString()}원
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>재고</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--ink)', fontFamily: 'var(--font-display)' }}>{stock}개</span>
+            </div>
+          </div>
+        </ConfirmModal>
+      )}
     </div>
   );
 }

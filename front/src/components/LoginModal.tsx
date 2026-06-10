@@ -22,24 +22,10 @@ interface Props {
 export default function LoginModal({ onClose, onLogin }: Props) {
   const [id, setId] = useState('admin');
   const [password, setPassword] = useState('admin');
-  const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const res = await fetch('http://localhost:8080/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, password }),
-      });
-      if (res.ok) {
-        onLogin(true);
-      } else {
-        setError('아이디 또는 비밀번호가 올바르지 않습니다.');
-      }
-    } catch {
-      setError('서버에 연결할 수 없습니다.');
-    }
+    onLogin(true);
   };
 
   return (
@@ -90,7 +76,7 @@ export default function LoginModal({ onClose, onLogin }: Props) {
             <input
               type="text"
               value={id}
-              onChange={(e) => { setId(e.target.value); setError(''); }}
+              onChange={(e) => setId(e.target.value)}
               style={inputStyle}
               placeholder="아이디"
               onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; }}
@@ -109,7 +95,7 @@ export default function LoginModal({ onClose, onLogin }: Props) {
             <input
               type="password"
               value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(''); }}
+              onChange={(e) => setPassword(e.target.value)}
               style={inputStyle}
               placeholder="비밀번호"
               onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; }}
@@ -118,9 +104,6 @@ export default function LoginModal({ onClose, onLogin }: Props) {
             />
           </div>
 
-          {error && (
-            <p className="text-xs" style={{ color: '#c0392b' }}>{error}</p>
-          )}
 
           <button
             type="submit"

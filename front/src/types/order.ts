@@ -1,3 +1,13 @@
+export interface AdminOrder {
+  id: number;
+  deliveryId: number;
+  email: string;
+  address: string;
+  totalPrice: number;
+  status: string;
+  createdAt: string;
+}
+
 export interface Product {
   id: number;
   name: string;
