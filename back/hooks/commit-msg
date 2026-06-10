@@ -1,5 +1,4 @@
 #!/bin/bash
-exit 0
   COMMIT_MSG=$(cat "$1")
   PATTERN="^(feat|fix|refactor|docs|test|chore|style|hotfix)/[0-9]+/.+"
 
