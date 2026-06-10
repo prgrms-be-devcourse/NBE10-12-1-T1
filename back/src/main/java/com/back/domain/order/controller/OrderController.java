@@ -1,7 +1,7 @@
 package com.back.domain.order.controller;
 
 import com.back.domain.order.dto.OrderItemResponseDto;
-import com.back.domain.order.dto.OrderRequestDto.*;
+import com.back.domain.order.dto.OrderRequestDto.CreateOrderRequest;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.service.OrderService;
 import com.back.global.annotation.ApiV1;

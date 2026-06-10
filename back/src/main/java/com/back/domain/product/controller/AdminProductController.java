@@ -1,6 +1,7 @@
 package com.back.domain.product.controller;
 
-import com.back.domain.product.dto.ProductRequestDto.*;
+import com.back.domain.product.dto.ProductRequestDto.CreateProductRequest;
+import com.back.domain.product.dto.ProductRequestDto.PatchProductRequest;
 import com.back.domain.product.dto.ProductResponseDto;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.service.ProductService;

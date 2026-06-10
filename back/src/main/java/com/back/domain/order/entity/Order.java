@@ -44,17 +44,6 @@ public class Order extends BaseEntity {
         return order;
     }
 
-    public static Order create(String email, String address, List<OrderItem> orderItems) {
-        Order order = new Order();
-        order.email = email;
-        order.address = address;
-        order.deliveryId = deliveryId;
-        order.status = OrderStatus.PAYMENT_COMPLETE;
-        order.addItemsAndSetTotalPrice(orderItems);
-
-        return order;
-    }
-
     private void addItemsAndSetTotalPrice(List<OrderItem> orderItems) {
         int totalPrice = 0;
         for(OrderItem item : orderItems) {
