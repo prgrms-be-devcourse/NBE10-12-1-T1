@@ -49,6 +49,7 @@ public class AdminProductController {
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "관리자 상품 수정")
     public ResponseDto<ProductResponseDto> update(
             @PathVariable("id") Long id,
             @RequestBody @Valid PatchProductRequest requestDto
@@ -60,8 +61,8 @@ public class AdminProductController {
                 requestDto.stock(),
                 requestDto.imgUrl()
         );
-        return new ResponseDto<>("200-1", "관리자 상품 수정 성공", ProductResponseDto.from(product));
 
+        return new ResponseDto<>("200-1", "관리자 상품 수정 성공", ProductResponseDto.from(product));
     }
 
     @DeleteMapping("/{id}")
