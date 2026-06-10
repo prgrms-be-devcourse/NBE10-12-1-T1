@@ -9,6 +9,7 @@ import com.back.domain.order.repository.OrderRepository;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
 import com.back.global.exception.DuplicateProductException;
+import com.back.global.exception.InsufficientStockException;
 import com.back.global.exception.OrderNotFoundException;
 import com.back.global.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,9 @@ public class OrderService {
 
     public OrderResponseDto createOrder(CreateOrderRequest requestDto) {
 
+        //DB 조건부 재고 차감
+        decreaseStocks(requestDto);
+
         //1. 요청들이 들어온 상품Map 생성 {1 : 1번상품},{2 : 2번상품}
         Map<Long, Product> productMap = makeProductMap(requestDto);
 
@@ -56,6 +60,7 @@ public class OrderService {
                 requestDto.address(),
                 orderItems,
                 deliveryId);
+
         orderRepository.save(order);
 
         return OrderResponseDto.from(order);
@@ -64,7 +69,7 @@ public class OrderService {
     private Map<Long, Product> makeProductMap(CreateOrderRequest requestDto) {
         List<Long> productIds = requestDto.orderItems().stream()
                 .map(item -> item.productId()).toList();
-        log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
+        //log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
 
         long distinctCount = productIds.stream().distinct().count();
         if (productIds.size() != distinctCount) {
@@ -83,7 +88,6 @@ public class OrderService {
                 item ->
                 {
                     Product product = productMap.get(item.productId());
-                    product.decreaseStock(item.amount());
 
                     return OrderItem.create(
                             product.getId(),
@@ -136,4 +140,37 @@ public class OrderService {
                 .toList();
     }
 
+    private void decreaseStocks(CreateOrderRequest requestDto) {
+        //orderItems를 productId기준으로 묶고 수량을 합산
+        Map<Long, Integer> amounts = requestDto.orderItems().stream()
+                .collect(Collectors.groupingBy(
+                        item -> item.productId(),
+                        Collectors.summingInt(item -> item.amount())
+                ));
+
+        amounts.entrySet().stream()
+                //모든 트랜잭션이 같은 순서로 상품을 처리하기 위해 productId기준으로 오름차순 정렬
+                .sorted(Map.Entry.comparingByKey())
+                //entry에는 amount의 각 줄 (특정 상품이 몇개 주문되었는지) 저장
+                .forEach(entry -> {
+                    Long productId = entry.getKey();
+                    int amount = entry.getValue();
+
+                    //decreaseStockIfAvailable를 통해 조건부 update쿼리 실행
+                    //java에서 차감하는게 아니라 DB에서 바로 처리
+                    int updatedRows = productRepository
+                            .decreaseStockIfAvailable(productId, amount);
+
+                    //update 쿼리를 통해 수정된 행의 개수가 0이면 재고차감 실패
+                    if (updatedRows == 0) {
+                        //해당 상품이 소프트 삭제된 항목인지 확인
+                        if (!productRepository.existsByIdAndDeletedAtIsNull(productId)) {
+                            //상품이 없거나 삭제된 상품
+                            throw new ProductNotFoundException();
+                        }
+                        //상품은 있으나 재고부족
+                        throw new InsufficientStockException();
+                    }
+                });
+    }
 }
