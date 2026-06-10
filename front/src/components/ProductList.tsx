@@ -72,8 +72,8 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-          gap: 12,
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          gap: 20,
         }}
       >
         {products.map((product) => (
@@ -102,23 +102,23 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               style={{ background: 'none', border: 'none', padding: 0, display: 'block' }}
             >
               <BeanPlaceholder name={product.name} />
-              <div className="p-2.5">
+              <div className="p-4" style={{ minHeight: 110 }}>
                 <p
-                  className="text-[10px] font-semibold tracking-[0.18em] uppercase mb-0.5 truncate"
-                  style={{ color: 'var(--muted)' }}
+                  className="text-base font-bold mb-1 truncate"
+                  style={{ fontFamily: 'var(--font-body)', color: 'var(--ink)', fontWeight: 800 }}
                 >
                   {product.name}
                 </p>
                 {isAdmin && product.stock !== undefined && (
                   <p
-                    className="text-xs font-semibold leading-snug mb-1 truncate"
-                    style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+                    className="text-sm font-semibold mb-1 truncate"
+                    style={{ color: 'var(--ink-soft)' }}
                   >
                     재고 {product.stock}개
                   </p>
                 )}
                 <p
-                  className="text-sm font-bold"
+                  className="text-base font-bold"
                   style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
                 >
                   {product.price.toLocaleString()}원
