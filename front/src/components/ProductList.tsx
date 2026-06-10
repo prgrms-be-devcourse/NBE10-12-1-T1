@@ -11,31 +11,22 @@ interface Props {
 
 const MAX_CARDS = 40;
 
-function BeanPlaceholder({ name }: { name: string }) {
-  const label = name.slice(0, 6).toUpperCase();
+const DEFAULT_IMAGES = [
+  '/스크린샷 2026-06-10 오후 3.36.08.png',
+  '/스크린샷 2026-06-10 오후 3.36.27.png',
+  '/스크린샷 2026-06-10 오후 3.40.17.png',
+];
+
+function ProductImage({ imgUrl, id, name }: { imgUrl: string; id: number; name: string }) {
+  const src = imgUrl || DEFAULT_IMAGES[id % DEFAULT_IMAGES.length];
   return (
-    <div
-      className="w-full relative overflow-hidden flex flex-col items-center justify-center gap-1"
-      style={{
-        aspectRatio: '4 / 3',
-        background: `repeating-linear-gradient(135deg,
-          #e8d5c4 0px, #e8d5c4 11px,
-          #dfc9b5 11px, #dfc9b5 22px)`,
-      }}
-    >
-      <span
-        className="text-xs font-bold tracking-wider opacity-50 text-center leading-tight"
-        style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
-      >
-        {label}
-      </span>
-      <span
-        className="text-[9px] tracking-wide px-1.5 py-0.5 rounded"
-        style={{ background: 'rgba(255,255,255,0.5)', color: 'var(--ink-soft)' }}
-      >
-        원두 사진
-      </span>
-    </div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={name}
+      className="w-full object-cover"
+      style={{ aspectRatio: '4 / 4.12' }}
+    />
   );
 }
 
@@ -46,8 +37,8 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
     <div
       className="rounded-2xl p-6 flex-1 overflow-y-auto"
       style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--line)',
+        background: isAdmin ? '#3c3228' : 'var(--surface)',
+        border: isAdmin ? '1px solid #504235' : '1px solid var(--line)',
         boxShadow: '0 1px 2px rgba(46,31,18,.04), 0 8px 28px rgba(46,31,18,.06)',
       }}
     >
@@ -101,7 +92,7 @@ export default function ProductList({ products, onAdd, isAdmin, onAddProduct, on
               className="w-full text-left cursor-pointer"
               style={{ background: 'none', border: 'none', padding: 0, display: 'block' }}
             >
-              <BeanPlaceholder name={product.name} />
+              <ProductImage imgUrl={product.imgUrl} id={product.id} name={product.name} />
               <div className="p-4" style={{ minHeight: 110 }}>
                 <p
                   className="text-base font-bold mb-1 truncate"

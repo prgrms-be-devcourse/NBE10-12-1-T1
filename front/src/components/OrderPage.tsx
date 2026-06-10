@@ -240,19 +240,33 @@ export default function OrderPage() {
   );
 
   return (
-    <div className="h-screen pt-6 pb-4 px-6 flex flex-col overflow-hidden" style={{ background: 'var(--bg)' }}>
-      <div className="w-full px-4 flex flex-col flex-1 overflow-hidden">
+    <div className="h-screen pt-6 pb-4 px-6 flex flex-col overflow-hidden" style={{ background: isAdmin ? '#302820' : 'var(--bg)', transition: 'background 0.4s ease' }}>
+      <div className="w-full px-4 flex flex-col flex-1 overflow-hidden" style={{ maxWidth: 1600, margin: '0 auto' }}>
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Beantage logo" style={{ height: 80, width: 'auto' }} />
             <h1
               className="text-5xl font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--ink)' }}
+              style={{ fontFamily: 'var(--font-display)', color: isAdmin ? '#f5f0e8' : 'var(--ink)', transition: 'color 0.4s ease' }}
             >
               Beantage
             </h1>
+            {isAdmin && (
+              <span
+                className="text-xl font-bold tracking-widest px-4 py-2 rounded-xl self-center"
+                style={{
+                  background: 'var(--accent)',
+                  color: 'white',
+                  fontFamily: 'var(--font-body)',
+                  letterSpacing: '0.15em',
+                  marginTop: 8,
+                }}
+              >
+                ADMIN
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-3">
             {isAdmin && (
@@ -275,20 +289,21 @@ export default function OrderPage() {
               }}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all"
               style={{
-                background: 'var(--surface)',
-                border: '1px solid var(--line)',
-                color: 'var(--ink-soft)',
+                background: isAdmin ? '#4a3e2e' : 'var(--surface)',
+                border: isAdmin ? '1px solid #6a5840' : '1px solid var(--line)',
+                color: isAdmin ? '#c8b89a' : 'var(--ink-soft)',
                 fontFamily: 'var(--font-body)',
+                transition: 'background 0.4s ease, border-color 0.4s ease, color 0.4s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--ink)';
-                e.currentTarget.style.color = 'var(--bg)';
-                e.currentTarget.style.borderColor = 'var(--ink)';
+                e.currentTarget.style.background = isAdmin ? '#6a5840' : 'var(--ink)';
+                e.currentTarget.style.color = isAdmin ? '#f5f0e8' : 'var(--bg)';
+                e.currentTarget.style.borderColor = isAdmin ? '#8a7858' : 'var(--ink)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--surface)';
-                e.currentTarget.style.color = 'var(--ink-soft)';
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.background = isAdmin ? '#4a3e2e' : 'var(--surface)';
+                e.currentTarget.style.color = isAdmin ? '#c8b89a' : 'var(--ink-soft)';
+                e.currentTarget.style.borderColor = isAdmin ? '#6a5840' : 'var(--line)';
               }}
             >
               {isAdmin ? '로그아웃' : '로그인'}
@@ -298,17 +313,17 @@ export default function OrderPage() {
 
         {/* 어드민 탭 */}
         {isAdmin && (
-          <div className="flex gap-1 mb-3" style={{ borderBottom: '2px solid var(--line)', paddingBottom: 0 }}>
+          <div className="flex gap-1 mb-3" style={{ borderBottom: '2px solid #504235', paddingBottom: 0 }}>
             {(['products', 'orders'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setAdminTab(tab)}
                 className="px-5 py-2.5 text-sm font-semibold cursor-pointer transition-all rounded-t-lg"
                 style={{
-                  background: adminTab === tab ? 'var(--surface)' : 'transparent',
-                  color: adminTab === tab ? 'var(--ink)' : 'var(--muted)',
-                  border: adminTab === tab ? '1px solid var(--line)' : '1px solid transparent',
-                  borderBottom: adminTab === tab ? '2px solid var(--surface)' : '1px solid transparent',
+                  background: adminTab === tab ? '#3c3228' : 'transparent',
+                  color: adminTab === tab ? '#f5f0e8' : '#a08060',
+                  border: adminTab === tab ? '1px solid #504235' : '1px solid transparent',
+                  borderBottom: adminTab === tab ? '2px solid #3c3228' : '1px solid transparent',
                   marginBottom: adminTab === tab ? -2 : 0,
                   fontFamily: 'var(--font-body)',
                 }}
