@@ -89,8 +89,20 @@ public class OrderService {
     }
 
     private Long findOrMakeDeliveryId(CreateOrderRequest requestDto) {
-        LocalDateTime startDate = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(14, 0));
-        LocalDateTime endDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 59, 59));
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = now.toLocalDate();
+        LocalTime currentTime = now.toLocalTime();
+
+        LocalDateTime startDate;
+        LocalDateTime endDate;
+
+        if (currentTime.isBefore(LocalTime.of(14, 0))) {
+            startDate = LocalDateTime.of(today.minusDays(1), LocalTime.of(14, 0, 0));
+            endDate = LocalDateTime.of(today, LocalTime.of(13, 59, 59));
+        } else {
+            startDate = LocalDateTime.of(today, LocalTime.of(14, 0, 0));
+            endDate = LocalDateTime.of(today.plusDays(1), LocalTime.of(13, 59, 59));
+        }
         Optional<Order> previousOrder = orderRepository.findTopByEmailAndAddressAndCreatedAtBetween(
                 requestDto.email(),
                 requestDto.address(),
