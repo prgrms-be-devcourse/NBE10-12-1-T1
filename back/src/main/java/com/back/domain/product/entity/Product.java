@@ -46,10 +46,6 @@ public class Product extends BaseEntity {
         this.deletedAt = LocalDateTime.now();
     }
 
-    public boolean isDeleted() {
-        return this.deletedAt != null;
-    }
-
     public void decreaseStock(Integer stock) {
         if(this.stock < stock) throw new IllegalArgumentException("재고가 부족합니다. 현재 재고: " + this.stock);
         this.stock -= stock;

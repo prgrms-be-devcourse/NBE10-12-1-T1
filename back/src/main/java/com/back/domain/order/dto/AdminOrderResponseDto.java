@@ -1,5 +1,7 @@
 package com.back.domain.order.dto;
 
+import com.back.domain.order.entity.Order;
+
 import java.time.LocalDateTime;
 
 public record AdminOrderResponseDto (
@@ -16,10 +18,10 @@ public record AdminOrderResponseDto (
                 order.getEmail(),
                 order.getAddress(),
                 order.getTotalPrice(),
-                order.getStatus().getName(),
+                order.getStatus().getNickname(),
                 order.getCreatedAt()
 
-        )
+        );
 
     }
 }

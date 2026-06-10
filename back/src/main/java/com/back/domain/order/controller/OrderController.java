@@ -1,6 +1,7 @@
 package com.back.domain.order.controller;
 
 import com.back.domain.order.dto.AdminLoginRequestDto;
+import com.back.domain.order.dto.AdminOrderResponseDto;
 import com.back.domain.order.dto.OrderRequestDto.*;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.service.OrderService;
@@ -25,9 +26,9 @@ public class OrderController {
 
     @GetMapping("/admin/orders")
     @Operation(summary = "주문 목록 조회")
-    public ResponseEntity<ResponseDto<List<OrderResponseDto>>> adminOrderList() {
-        List<OrderResponseDto> orders = orderService.adminOrderList();
-        return ResponseEntity.ok(new ResponseDto<>("200-1", "주문 목록 조회 완료", orders));
+    public ResponseEntity<ResponseDto<List<AdminOrderResponseDto>>> adminOrderList() {
+        List<AdminOrderResponseDto> orders = orderService.adminOrderList();
+        return ResponseEntity.ok(new ResponseDto<>("200-1", "주문 목록 조회 성공", orders));
     }
 
     @PostMapping("/orders")

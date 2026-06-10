@@ -1,11 +1,13 @@
 package com.back.domain.order.service;
 
 import com.back.domain.order.dto.AdminLoginRequestDto;
-import com.back.domain.order.dto.OrderRequestDto.*;
+import com.back.domain.order.dto.AdminOrderResponseDto;
+import com.back.domain.order.dto.OrderRequestDto.CreateOrderRequest;
 import com.back.domain.order.dto.OrderResponseDto;
 import com.back.domain.order.entity.Order;
-import com.back.domain.order.repository.OrderRepository;
 import com.back.domain.order.entity.OrderItem;
+import com.back.domain.order.enums.OrderStatus;
+import com.back.domain.order.repository.OrderRepository;
 import com.back.domain.product.entity.Product;
 import com.back.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +31,10 @@ public class OrderService {
     private static final String ADMIN_ID = "admin";
     private static final String ADMIN_PW = "admin";
 
-    public List<OrderResponseDto> adminOrderList() {
+    public List<AdminOrderResponseDto> adminOrderList() {
         return orderRepository.findAll()
                 .stream()
-                .map(OrderResponseDto::from)
+                .map(AdminOrderResponseDto::from)
                 .toList();
     }
 
@@ -62,7 +64,11 @@ public class OrderService {
                 })
                 .toList();
 
-        Order order = Order.create(requestDto.email(), requestDto.address(), orderItems);
+        Order order = Order.create(
+                requestDto.email(),
+                requestDto.address(),
+                OrderStatus.PAYMENT_COMPLETE);
+
         orderRepository.save(order);
         return OrderResponseDto.from(order);
     }

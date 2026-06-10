@@ -1,6 +1,7 @@
 package com.back.domain.order.order.controller;
 
 import com.back.domain.order.entity.Order;
+import com.back.domain.order.enums.OrderStatus;
 import com.back.domain.order.repository.OrderRepository;
 import com.back.domain.order.entity.OrderItem;
 import com.back.domain.product.entity.Product;
@@ -88,13 +89,14 @@ class OrderControllerTest {
         OrderItem orderItem = OrderItem.create(pid, product.getName(), product.getPrice(), 10);
         orderItems.add(orderItem);
 
-        Order order = Order.create("input@naver.com", "서울 OO구", orderItems);
+        Order order = Order.create("input@naver.com", "서울 OO구", OrderStatus.PAYMENT_COMPLETE);
         orderRepository.save(order);
+        orderItem.assignOrder(order);
 
         mockMvc.perform(get("/api/v1/admin/orders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("관리자 주문 목록 조회 성공"))
+                .andExpect(jsonPath("$.message").value("주문 목록 조회 성공"))
                 .andExpect(jsonPath("$.data[0].id").value(order.getId()))
                 .andExpect(jsonPath("$.data[0].email").value("input@naver.com"))
                 .andExpect(jsonPath("$.data[0].address").value("서울 OO구"))

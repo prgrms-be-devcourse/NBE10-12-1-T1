@@ -1,8 +1,9 @@
 package com.back.domain.product.controller;
 
 import com.back.domain.product.entity.Product;
+import com.back.domain.product.repository.ProductRepository;
 import com.back.domain.product.service.ProductService;
-import org.junit.jupiter.api.Assertions;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,6 +30,10 @@ public class AdminProductControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("관리자 상품 생성")
@@ -122,18 +128,21 @@ public class AdminProductControllerTest {
 
     @Test
     @DisplayName("관리자 상품 삭제(소프트 삭제) 성공")
-    void deleteProducts() throws Exception {
-        Product product1 = productService.create("상품 1", 30000, 200, "product1.jpg");
+    void deleteProduct() throws Exception {
+        Product product = productService.create("상품 1", 30000, 200, "product1.jpg");
 
-        mockMvc.perform(delete("/api/v1/admin/products/{id}", product1.getId()))
+        mockMvc.perform(delete("/api/v1/admin/products/{id}", product.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("상품이 삭제되었습니다"))
                 .andExpect(jsonPath("$.data").doesNotExist());
 
-        Product product = productService.findById(product1.getId()).get();
-        Assertions.assertNotNull(product.getDeletedAt());
+        productRepository.flush();
+        entityManager.clear();
+
+        Product deletedProduct = productRepository.findById(product.getId()).orElseThrow();
+
+        assertThat(deletedProduct.getDeletedAt()).isNotNull();
+        assertThat(productRepository.findByIdAndDeletedAtIsNull(product.getId())).isEmpty();
     }
 }
-
-
