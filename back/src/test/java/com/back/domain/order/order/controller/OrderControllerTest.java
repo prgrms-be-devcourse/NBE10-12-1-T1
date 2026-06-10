@@ -16,11 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -194,8 +196,92 @@ class OrderControllerTest {
 
 
         Assertions.assertEquals(deliveryId1, deliveryId2);
+    }
 
+    @Test
+    @DisplayName("주문 생성 성공 조건부 재고 차감")
+    //동시성 테스트 이므로 트랜잭션 없이 실행
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void t4() throws Exception {
+        Product product = productRepository.saveAndFlush(
+                new Product("맛있는 원두", 2000, 10, "image.com")
+        );
 
+        String email = "input@naver.com";
+        long orderCountBefore = orderRepository.count();
 
+        String requestBody = """
+            {
+              "email": "%s",
+              "address": "서울 OO구",
+              "orderItems": [
+                {
+                  "productId": %d,
+                  "amount": 7
+                }
+              ]
+            }
+            """.formatted(email, product.getId());
+
+        //동시에 요청 2개를 보내기 위해 스레드 2개 생성
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        CountDownLatch ready = new CountDownLatch(2);
+        CountDownLatch start = new CountDownLatch(1);
+
+        Callable<MvcResult> request = () -> {
+            //스레드 준비
+            ready.countDown();
+            //start.countDown 오기 전까지 대기
+            start.await();
+
+            return mockMvc.perform(
+                    post("/api/v1/orders")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(requestBody)
+            ).andReturn();
+        };
+
+        try {
+            //각각 다른 스레드에서 작업을 시행하므로 Future로 작업 결과를 나중에 받을 수 있게함
+            Future<MvcResult> first = executor.submit(request);
+            Future<MvcResult> second = executor.submit(request);
+
+            //두 스레드가 준비될때까지 대기
+            Assertions.assertTrue(ready.await(5, TimeUnit.SECONDS));
+            //동시에 스레드 실행
+            start.countDown();
+
+            MvcResult firstResult = first.get();
+            MvcResult secondResult = second.get();
+
+            List<Integer> statuses = new ArrayList<>(List.of(
+                    firstResult.getResponse().getStatus(),
+                    secondResult.getResponse().getStatus()
+            ));
+            statuses.sort(Integer::compareTo);
+
+            //하나는 성공하고 다른 하나는 재고 부족
+            Assertions.assertEquals(List.of(201, 409), statuses);
+
+            Product result = productRepository.findById(product.getId())
+                    .orElseThrow();
+
+            //성공한 주문 7개만 차감
+            Assertions.assertEquals(3, result.getStock());
+            //성공한 주문 개수 1개만 생성
+            Assertions.assertEquals(orderCountBefore + 1, orderRepository.count());
+        } finally {
+            //스레드 종료
+            executor.shutdownNow();
+
+            //트랜잭션을 미사용하였기 때문에 직접 데이터 정리
+            List<Long> orderIds = orderRepository.findAll().stream()
+                    .filter(order -> email.equals(order.getEmail()))
+                    .map(Order::getId)
+                    .toList();
+
+            orderRepository.deleteAllById(orderIds);
+            productRepository.deleteById(product.getId());
+        }
     }
 }
