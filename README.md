@@ -113,7 +113,7 @@ NBE10-12-1-T1/
 
 - Spring Batch + `@EnableScheduling`으로 주문 상태 자동 변경
 - `OrderStatus` 흐름: `PAYMENT_COMPLETE(결제 완료)` → `PREPARING_PRODUCT(상품 준비 중)` → `IN_TRANSIT(배송 중)` → `DELIVERED(배송 완료)`
-- 현재 구현 범위: `PAYMENT_COMPLETE(결제 완료)` → `PREPARING_PRODUCT(상품 준비 중)` 단계까지 동작, 이후 단계는  추후 구현 예정
+- 현재 구현 범위: `PAYMENT_COMPLETE(결제 완료)` → `PREPARING_PRODUCT(상품 준비 중)` 단계까지 동작, 이후 단계는 추후 구현 예정
 
 ---
 
