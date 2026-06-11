@@ -36,17 +36,17 @@ public class OrderBatchConfig {
     @StepScope
     @Bean
     public JpaCursorItemReader<Order> myReader(EntityManagerFactory entityManagerFactory) {
+        // 시작 시간: 어제 14:00:00
         LocalDateTime startDate = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(14, 0));
-        LocalDateTime endDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 59, 59));
-//        LocalDateTime startDate = LocalDateTime.now();
-//        .queryString("SELECT o FROM Order o WHERE o.status in :statuses AND o.createdAt < :startDate")
-//        List<OrderStatus> statuses = List.of(OrderStatus.PAYMENT_COMPLETE,OrderStatus.PREPARING_PRODUCT, OrderStatus.IN_TRANSIT);
+
+        // 종료 시간: 오늘 14:00:00 (초를 빼지 않음)
+        LocalDateTime endDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
         OrderStatus status = OrderStatus.PAYMENT_COMPLETE;
         return new JpaCursorItemReaderBuilder<Order>()
                 .name("OrderReader")
                 .entityManagerFactory(entityManagerFactory)
                 // 실행할 JPQL 쿼리 (결제완료이면서 어제 14시 이후 오늘 13시59분59초 이전 상태)
-                .queryString("SELECT o FROM Order o WHERE o.status = :status AND o.createdAt BETWEEN :startDate AND :endDate")
+                .queryString("SELECT o FROM Order o WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate")
                 .parameterValues(Map.of(
                         "status", status,
                         "startDate", startDate,

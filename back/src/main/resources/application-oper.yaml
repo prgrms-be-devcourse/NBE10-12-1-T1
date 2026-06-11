@@ -1,0 +1,27 @@
+# application-oper.yml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/${BEANTAGE_DB}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${BEANTAGE_NAME}
+    password: ${BEANTAGE_PWD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: false
+  batch:
+    jdbc:
+      initialize-schema: never  # 운영 DB는 테이블 직접 관리
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate  # 운영에서 update는 위험
+    properties:
+      hibernate:
+        format_sql: false
+        highlight_sql: false
+        use_sql_comments: false
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: INFO
+    org.hibernate.orm.jdbc.extract: INFO
+    org.springframework.transaction.interceptor: INFO
