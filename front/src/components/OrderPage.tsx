@@ -169,7 +169,7 @@ export default function OrderPage() {
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
   }, []);
 
-  const handleCheckout = async (form: { email: string; address: string; zipcode: string }) => {
+  const handleCheckout = async (form: { email: string; address: string; zipcode: string }): Promise<boolean> => {
     const fullAddress = `${form.zipcode} ${form.address}`.trim();
     const body = {
       email: form.email,
@@ -188,12 +188,14 @@ export default function OrderPage() {
         setOrderConfirm(json.data);
         setCart([]);
         setIsOpen(false);
+        return true;
       } else if (res.status === 409) {
         setCheckoutError(json.message || '재고가 부족한 상품이 있습니다.');
       }
     } catch (err) {
       console.error('주문 생성 실패:', err);
     }
+    return false;
   };
 
   const handleLogin = (adminStatus: boolean) => {
