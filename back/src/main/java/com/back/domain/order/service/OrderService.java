@@ -42,7 +42,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto createOrder(CreateOrderRequest requestDto) {
-
+        validateDuplicateProducts(requestDto);
         //DB 조건부 재고 차감
         decreaseStocks(requestDto);
 
@@ -72,11 +72,6 @@ public class OrderService {
                 .map(item -> item.productId()).toList();
         //log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
 
-        long distinctCount = productIds.stream().distinct().count();
-        if (productIds.size() != distinctCount) {
-            throw new DuplicateProductException();
-        }
-
         Map<Long, Product> productMap = productIds.stream().map(id ->
                         productRepository.findByIdAndDeletedAtIsNull(id)
                                 .orElseThrow(ProductNotFoundException::new))
@@ -86,17 +81,17 @@ public class OrderService {
 
     private List<OrderItem> makeOrderItems(CreateOrderRequest requestDto, Map<Long, Product> productMap) {
         List<OrderItem> orderItems = requestDto.orderItems().stream().map(
-                item ->
-                {
-                    Product product = productMap.get(item.productId());
+                        item ->
+                        {
+                            Product product = productMap.get(item.productId());
 
-                    return OrderItem.create(
-                            product.getId(),
-                            product.getName(),
-                            product.getPrice(),
-                            item.amount()
-                    );
-                })
+                            return OrderItem.create(
+                                    product.getId(),
+                                    product.getName(),
+                                    product.getPrice(),
+                                    item.amount()
+                            );
+                        })
                 .toList();
         return orderItems;
     }
@@ -139,6 +134,15 @@ public class OrderService {
         return order.getOrderItems().stream()
                 .map(OrderItemResponseDto::from)
                 .toList();
+    }
+
+    private void validateDuplicateProducts(CreateOrderRequest requestDto) {
+        List<Long> productIds = requestDto.orderItems().stream()
+                .map(item -> item.productId()).toList();
+
+        if (productIds.size() != productIds.stream().distinct().count()) {
+            throw new DuplicateProductException();
+        }
     }
 
     private void decreaseStocks(CreateOrderRequest requestDto) {
