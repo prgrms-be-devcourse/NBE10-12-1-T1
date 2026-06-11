@@ -98,7 +98,7 @@ NBE10-12-1-T1/
 
 ### 관리자
 
-- 로그인 인증 (`POST /admin/login`)
+- 로그인 (ID: admin / PW: admin, 프론트 하드코딩)
 - 상품 추가 / 수정 (PATCH, 부분 수정 지원) / 소프트 삭제
 - 전체 주문 목록 조회
 - 주문별 주문 아이템 상세 조회
@@ -125,12 +125,12 @@ NBE10-12-1-T1/
 | --- | --- | --- | --- |
 | GET | `/products` | 상품 목록 조회 | 삭제되지 않은 상품만 |
 | POST | `/orders` | 주문 생성 | 재고 차감, 배송 묶음 처리 |
-| GET | `/admin/orders` | 전체 주문 목록 조회 | 관리자 |
-| GET | `/admin/orders/{id}/order-items` | 주문 아이템 목록 조회 | 관리자 |
-| GET | `/admin/products` | 관리자 상품 목록 조회 | 관리자 |
-| POST | `/admin/products` | 상품 추가 | 관리자 |
-| PATCH | `/admin/products/{id}` | 상품 부분 수정 | 관리자 |
-| DELETE | `/admin/products/{id}` | 상품 삭제 (소프트 삭제) | 관리자 |
+| GET | `/admin/orders` | 관리자 주문 목록 조회 | 전체 주문 조회 |
+| GET | `/admin/orders/{id}/order-items` | 관리자 주문 아이템 목록 조회 | 주문 상세 아이템 |
+| GET | `/admin/products` | 관리자 상품 목록 조회 | 상품 전체 조회 |
+| POST | `/admin/products` | 관리자 상품 생성 | 새로운 상품 추가 |
+| PATCH | `/admin/products/{id}` | 관리자 상품 부분 수정 | 상품명, 상품 가격, 재고 수정 |
+| DELETE | `/admin/products/{id}` | 관리자 상품 삭제 | 소프트 삭제 |
 
 > Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 > 
@@ -172,7 +172,7 @@ cd back
 ```
 
 - 기본 포트: `8080`
-- 기본 프로파일: `dev` (H2 인메모리 DB 사용)
+- 기본 프로파일: `dev` (H2 파일 DB 사용)
 - H2 콘솔: `http://localhost:8080/h2-console`
     - JDBC URL: `jdbc:h2:./db_dev`
     - Username: `sa` / Password: (없음)
