@@ -82,17 +82,17 @@ public class OrderService {
 
     private List<OrderItem> makeOrderItems(CreateOrderRequest requestDto, Map<Long, Product> productMap) {
         List<OrderItem> orderItems = requestDto.orderItems().stream().map(
-                        item ->
-                        {
-                            Product product = productMap.get(item.productId());
+                item ->
+                {
+                    Product product = productMap.get(item.productId());
 
-                            return OrderItem.create(
-                                    product.getId(),
-                                    product.getName(),
-                                    product.getPrice(),
-                                    item.amount()
-                            );
-                        })
+                    return OrderItem.create(
+                            product.getId(),
+                            product.getName(),
+                            product.getPrice(),
+                            item.amount()
+                    );
+                })
                 .toList();
         return orderItems;
     }
