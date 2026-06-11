@@ -49,7 +49,7 @@ interface Props {
   onToggle: () => void;
   onUpdateQuantity: (productId: number, delta: number) => void;
   total: number;
-  onCheckout: (form: OrderForm) => void;
+  onCheckout: (form: OrderForm) => Promise<boolean>;
 }
 
 export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity, total, onCheckout }: Props) {
@@ -61,6 +61,7 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
   const [addressDetail, setAddressDetail] = useState('');
   const [zipcode, setZipcode] = useState('');
   const [showPostcode, setShowPostcode] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; address?: string }>({});
   const postcodeContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,13 +96,27 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
     }
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     const domain = isCustomDomain ? customDomain : emailDomain;
-    onCheckout({
+    const newErrors: { email?: string; address?: string } = {};
+    if (!emailId.trim() || !domain.trim()) newErrors.email = '이메일을 입력해주세요.';
+    if (!address) newErrors.address = '배송지를 입력해주세요.';
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
+    setErrors({});
+    const success = await onCheckout({
       email: `${emailId}@${domain}`,
       address: `${address} ${addressDetail}`.trim(),
       zipcode,
     });
+    if (success) {
+      setEmailId('');
+      setEmailDomain(EMAIL_DOMAINS[0]);
+      setIsCustomDomain(false);
+      setCustomDomain('');
+      setAddress('');
+      setAddressDetail('');
+      setZipcode('');
+    }
   };
 
   return (
@@ -215,7 +230,7 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
             borderBottom: '1px solid var(--line)',
             overflowY: 'auto',
             flex: 1,
-            padding: '20px 24px 24px',
+            padding: '20px 24px 14px',
           }}
         >
           {/* 장바구니 목록 */}
@@ -322,6 +337,7 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
                   </select>
                 )}
               </div>
+              {errors.email && <p className="text-xs mt-1.5" style={{ color: '#b94040' }}>{errors.email}</p>}
             </div>
 
             <div>
@@ -368,6 +384,7 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
                 onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; }}
                 onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--line)'; }}
               />
+              {errors.address && <p className="text-xs mt-1.5" style={{ color: '#b94040' }}>{errors.address}</p>}
             </div>
 
             <button
@@ -386,6 +403,10 @@ export default function OrderSummary({ cart, isOpen, onToggle, onUpdateQuantity,
             >
               주문하기
             </button>
+
+            <p className="text-xs text-center" style={{ color: '#b94040', marginTop: -4 }}>
+              당일 오후 2시 이후의 주문 건은 다음 날 배송이 시작됩니다.
+            </p>
           </div>
         </div>
       </div>
