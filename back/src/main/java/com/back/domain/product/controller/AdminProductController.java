@@ -25,7 +25,7 @@ public class AdminProductController {
     private final ProductService productService;
 
     @PostMapping
-    @Operation(summary = "관리자 상품 추가")
+    @Operation(summary = "관리자 상품 생성")
     public ResponseDto<ProductResponseDto> create(
             @RequestBody @Valid CreateProductRequest requestDto
     ) {
@@ -46,7 +46,7 @@ public class AdminProductController {
     @Operation(summary = "관리자 상품 목록 조회")
     public ResponseDto<List<ProductResponseDto>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
-        return new ResponseDto<>("200", "관리자 상품 목록 조회 성공", products);
+        return new ResponseDto<>("200-1", "관리자 상품 목록 조회 성공", products);
     }
 
     @PatchMapping("/{id}")

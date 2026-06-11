@@ -74,7 +74,7 @@ public class AdminProductControllerTest {
 
         mockMvc.perform(get("/api/v1/admin/products"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("200"))
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.data[0].id").value(product1.getId()))
