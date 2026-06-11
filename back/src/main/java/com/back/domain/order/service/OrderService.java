@@ -14,6 +14,7 @@ import com.back.global.exception.OrderNotFoundException;
 import com.back.global.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,7 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     public List<OrderResponseDto> adminOrderList() {
-        return orderRepository.findAll()
+        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .map(OrderResponseDto::from)
                 .toList();
