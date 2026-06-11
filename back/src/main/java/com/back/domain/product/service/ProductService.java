@@ -18,7 +18,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public List<ProductResponseDto> getProducts() {
-        return productRepository.findByDeletedAtIsNull()
+        return productRepository.findByDeletedAtIsNullOrderByCreatedAtDesc()
                 .stream()
                 .map(ProductResponseDto::from)
                 .toList();

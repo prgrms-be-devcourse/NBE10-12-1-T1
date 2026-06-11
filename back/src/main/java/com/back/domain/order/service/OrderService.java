@@ -14,6 +14,7 @@ import com.back.global.exception.OrderNotFoundException;
 import com.back.global.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,7 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     public List<OrderResponseDto> adminOrderList() {
-        return orderRepository.findAll()
+        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .map(OrderResponseDto::from)
                 .toList();
@@ -42,7 +43,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto createOrder(CreateOrderRequest requestDto) {
-
+        validateDuplicateProducts(requestDto);
         //DB 조건부 재고 차감
         decreaseStocks(requestDto);
 
@@ -71,11 +72,6 @@ public class OrderService {
         List<Long> productIds = requestDto.orderItems().stream()
                 .map(item -> item.productId()).toList();
         //log.info("상품 아이디 리스트 : %s".formatted(productIds.toString()));
-
-        long distinctCount = productIds.stream().distinct().count();
-        if (productIds.size() != distinctCount) {
-            throw new DuplicateProductException();
-        }
 
         Map<Long, Product> productMap = productIds.stream().map(id ->
                         productRepository.findByIdAndDeletedAtIsNull(id)
@@ -139,6 +135,15 @@ public class OrderService {
         return order.getOrderItems().stream()
                 .map(OrderItemResponseDto::from)
                 .toList();
+    }
+
+    private void validateDuplicateProducts(CreateOrderRequest requestDto) {
+        List<Long> productIds = requestDto.orderItems().stream()
+                .map(item -> item.productId()).toList();
+
+        if (productIds.size() != productIds.stream().distinct().count()) {
+            throw new DuplicateProductException();
+        }
     }
 
     private void decreaseStocks(CreateOrderRequest requestDto) {

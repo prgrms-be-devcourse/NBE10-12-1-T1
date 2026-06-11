@@ -31,7 +31,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     boolean existsByIdAndDeletedAtIsNull(Long id);
 
-    List<Product> findByDeletedAtIsNull();
+    List<Product> findByDeletedAtIsNullOrderByCreatedAtDesc();
 
     Optional<Product> findByIdAndDeletedAtIsNull(Long id);
 

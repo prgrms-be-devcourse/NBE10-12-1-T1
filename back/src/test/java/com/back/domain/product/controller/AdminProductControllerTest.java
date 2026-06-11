@@ -77,17 +77,18 @@ public class AdminProductControllerTest {
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(2))
-                .andExpect(jsonPath("$.data[0].id").value(product1.getId()))
-                .andExpect(jsonPath("$.data[0].name").value("맛있는 원두"))
-                .andExpect(jsonPath("$.data[0].price").value(30000))
-                .andExpect(jsonPath("$.data[0].stock").value(200))
-                .andExpect(jsonPath("$.data[0].imgUrl").value("coffee1.jpg"))
 
-                .andExpect(jsonPath("$.data[1].id").value(product2.getId()))
-                .andExpect(jsonPath("$.data[1].name").value("더 맛있는 원두"))
-                .andExpect(jsonPath("$.data[1].price").value(45000))
-                .andExpect(jsonPath("$.data[1].stock").value(400))
-                .andExpect(jsonPath("$.data[1].imgUrl").value("coffee2.jpg"));
+                .andExpect(jsonPath("$.data[0].id").value(product2.getId()))
+                .andExpect(jsonPath("$.data[0].name").value("더 맛있는 원두"))
+                .andExpect(jsonPath("$.data[0].price").value(45000))
+                .andExpect(jsonPath("$.data[0].stock").value(400))
+                .andExpect(jsonPath("$.data[0].imgUrl").value("coffee2.jpg"))
+
+                .andExpect(jsonPath("$.data[1].id").value(product1.getId()))
+                .andExpect(jsonPath("$.data[1].name").value("맛있는 원두"))
+                .andExpect(jsonPath("$.data[1].price").value(30000))
+                .andExpect(jsonPath("$.data[1].stock").value(200))
+                .andExpect(jsonPath("$.data[1].imgUrl").value("coffee1.jpg"));
     }
 
     @Test
