@@ -34,7 +34,7 @@ public class ResponseAspect {
         // 원래 메서드 실행
         Object proceed = joinPoint.proceed();
 
-        // RsData 타입이면 상태 코드 설정
+        // ResponseDto 타입이면 상태 코드 설정
         ResponseDto<?> rsData = (ResponseDto<?>) proceed;
         response.setStatus(rsData.statusCode());
         return proceed;
