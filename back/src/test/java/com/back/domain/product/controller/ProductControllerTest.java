@@ -30,7 +30,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("상품 목록 조회 성공")
+    @DisplayName("관리자 상품 목록 조회 성공")
     void t1() throws Exception {
         Product product1 = productRepository.save(
                 new Product("맛있는 원두", 30000, 100, "coffee1.jpg")
@@ -43,7 +43,7 @@ public class ProductControllerTest {
         mockMvc.perform(get("/api/v1/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("상품 목록 조회 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 상품 목록 조회 성공"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(2))
 
@@ -61,20 +61,20 @@ public class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("상품 목록 조회 성공 - 빈 배열 반환")
+    @DisplayName("관리자 상품 목록 조회 성공 - 빈 배열 반환")
     void t2() throws Exception {
         productRepository.deleteAll();
 
         mockMvc.perform(get("/api/v1/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("상품 목록 조회 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 상품 목록 조회 성공"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(0));
     }
 
     @Test
-    @DisplayName("상품 목록 조회 성공 - 소프트 삭제")
+    @DisplayName("관리자 상품 목록 조회 성공 - 소프트 삭제")
     void t3() throws Exception {
         Product product = productRepository.save(
                 new Product("맛있는 원두", 30000, 100, "coffee1.jpg")
@@ -86,7 +86,7 @@ public class ProductControllerTest {
         mockMvc.perform(get("/api/v1/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("상품 목록 조회 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 상품 목록 조회 성공"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(0));
     }
