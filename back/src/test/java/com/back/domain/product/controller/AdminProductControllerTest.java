@@ -134,7 +134,7 @@ public class AdminProductControllerTest {
         mockMvc.perform(delete("/api/v1/admin/products/{id}", product.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.message").value("관리자 상품 제거 성공"))
+                .andExpect(jsonPath("$.message").value("관리자 상품 삭제 성공"))
                 .andExpect(jsonPath("$.data").doesNotExist());
 
         productRepository.flush();

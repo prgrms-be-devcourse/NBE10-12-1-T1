@@ -67,13 +67,13 @@ public class AdminProductController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "관리자 상품 제거")
+    @Operation(summary = "관리자 상품 삭제")
     public ResponseDto<Void> delete(@PathVariable Long id) {
         productService.delete(id);
 
         return new ResponseDto<>(
                         "200-1",
-                        "관리자 상품 제거 성공",
+                        "관리자 상품 삭제 성공",
                         null
         );
     }
