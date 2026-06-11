@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -40,6 +40,7 @@ public class OrderService {
                 .toList();
     }
 
+    @Transactional
     public OrderResponseDto createOrder(CreateOrderRequest requestDto) {
 
         //DB 조건부 재고 차감
