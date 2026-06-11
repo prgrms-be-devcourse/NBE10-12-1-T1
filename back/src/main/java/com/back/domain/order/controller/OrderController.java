@@ -34,7 +34,7 @@ public class OrderController {
     @Operation(summary = "주문 생성")
     public ResponseDto<OrderResponseDto> createOrder(@Valid @RequestBody CreateOrderRequest requestDto) {
         OrderResponseDto response = orderService.createOrder(requestDto);
-        return new ResponseDto<>("201-1", "주문 생성 되었습니다.", response);
+        return new ResponseDto<>("201-1", "주문 생성 성공", response);
     }
 
     @GetMapping("/admin/orders/{id}/order-items")

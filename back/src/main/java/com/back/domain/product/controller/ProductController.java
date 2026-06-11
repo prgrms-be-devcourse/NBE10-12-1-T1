@@ -23,13 +23,13 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    @Operation(summary = "사용자 상품 목록 조회")
+    @Operation(summary = "관리자 사용자 상품 목록 조회")
     public ResponseDto<List<ProductResponseDto>> getProducts() {
         List<ProductResponseDto> products = productService.getProducts();
 
         return new ResponseDto<>(
                 "200-1",
-                "상품 목록 조회 성공",
+                "관리자 상품 목록 조회 성공",
                 products
         );
     }
